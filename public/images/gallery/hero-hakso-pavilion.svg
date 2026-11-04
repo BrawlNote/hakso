@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-label="학소 철학관 대문 산수·송학도 시안 일러스트">
+  <defs>
+    <linearGradient id="paperBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5efe2" />
+      <stop offset="60%" stop-color="#ebe2cf" />
+      <stop offset="100%" stop-color="#dfd3bc" />
+    </linearGradient>
+    <linearGradient id="distantMtn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#355245" stop-opacity="0.38" />
+      <stop offset="100%" stop-color="#ebe2cf" stop-opacity="0.05" />
+    </linearGradient>
+    <linearGradient id="midMtn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f4738" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#dfd3bc" stop-opacity="0.1" />
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="0.76" cy="0.26" r="0.18">
+      <stop offset="0%" stop-color="#d6a95c" stop-opacity="0.55" />
+      <stop offset="70%" stop-color="#d6a95c" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#d6a95c" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 한지 배경 및 은은한 해무리 -->
+  <rect width="1200" height="640" fill="url(#paperBg)" />
+  <circle cx="910" cy="170" r="190" fill="url(#sunGlow)" />
+  <circle cx="910" cy="170" r="56" fill="#c99642" fill-opacity="0.35" />
+
+  <!-- 전통 창살 테두리 장식 -->
+  <rect x="24" y="24" width="1152" height="592" rx="10" fill="none" stroke="#8c7b60" stroke-width="2" stroke-opacity="0.45" />
+  <rect x="34" y="34" width="1132" height="572" rx="6" fill="none" stroke="#8c7b60" stroke-width="1" stroke-opacity="0.3" />
+
+  <!-- 원경 산능선 -->
+  <path d="M 34 430 Q 220 260 440 360 T 860 290 Q 1030 240 1166 350 L 1166 606 L 34 606 Z" fill="url(#distantMtn)" />
+
+  <!-- 중경 산능선 및 안개 -->
+  <path d="M 34 490 Q 180 350 380 430 T 780 370 Q 980 310 1166 440 L 1166 606 L 34 606 Z" fill="url(#midMtn)" />
+  <rect x="34" y="430" width="1132" height="65" fill="#f5efe2" fill-opacity="0.42" />
+
+  <!-- 정자(서재) 실루엣 -->
+  <g transform="translate(690, 315)" fill="#1c2923">
+    <path d="M -20 45 Q 75 10 170 45 L 150 52 Q 75 28 0 52 Z" />
+    <path d="M -5 52 L 155 52 L 145 64 L 5 64 Z" fill="#2d4239" />
+    <rect x="20" y="64" width="8" height="58" />
+    <rect x="71" y="64" width="8" height="58" />
+    <rect x="122" y="64" width="8" height="58" />
+    <rect x="36" y="74" width="28" height="36" fill="#e6cfa3" fill-opacity="0.65" />
+    <rect x="86" y="74" width="28" height="36" fill="#e6cfa3" fill-opacity="0.65" />
+    <rect x="8" y="122" width="134" height="10" />
+  </g>
+
+  <!-- 근경 바위와 소나무(松) -->
+  <path d="M 34 606 L 34 470 Q 160 450 290 525 Q 380 575 450 606 Z" fill="#23382e" />
+  <g stroke="#1b2620" stroke-linecap="round" fill="none">
+    <path d="M 140 530 Q 165 410 245 330 Q 305 280 390 275" stroke-width="14" />
+    <path d="M 210 375 Q 270 350 330 365" stroke-width="8" />
+    <path d="M 165 445 Q 115 395 75 390" stroke-width="9" />
+  </g>
+  <!-- 솔잎 군락 -->
+  <g fill="#193b2d" fill-opacity="0.88">
+    <ellipse cx="395" cy="268" rx="68" ry="24" />
+    <ellipse cx="325" cy="285" rx="55" ry="20" />
+    <ellipse cx="335" cy="358" rx="52" ry="18" />
+    <ellipse cx="245" cy="315" rx="60" ry="22" />
+    <ellipse cx="82" cy="382" rx="48" ry="18" />
+  </g>
+
+  <!-- 비상하는 학(鶴) 두 마리 -->
+  <g transform="translate(530, 175)" stroke="#1c1b18" stroke-width="2.5" fill="#fcfbf9">
+    <path d="M 0 20 Q -28 -15 -65 -8 Q -32 8 0 26 Z" />
+    <path d="M 0 20 Q 32 -18 68 -10 Q 35 8 0 26 Z" />
+    <path d="M -8 22 L 26 14 L 42 8" fill="none" />
+    <circle cx="28" cy="13" r="3" fill="#9e2a2b" stroke="none" />
+  </g>
+  <g transform="translate(625, 130) scale(0.78)" stroke="#1c1b18" stroke-width="2.5" fill="#fcfbf9">
+    <path d="M 0 20 Q -28 -15 -65 -8 Q -32 8 0 26 Z" />
+    <path d="M 0 20 Q 32 -18 68 -10 Q 35 8 0 26 Z" />
+    <path d="M -8 22 L 26 14 L 42 8" fill="none" />
+  </g>
+
+  <!-- 좌측 상단 낙관 및 한시풍 표제 -->
+  <g transform="translate(76, 86)">
+    <rect x="0" y="0" width="38" height="38" rx="4" fill="#9e2a2b" />
+    <text x="19" y="26" text-anchor="middle" fill="#fcfbf9" font-family="AppleMyungjo, serif" font-size="18" font-weight="700">鶴巢</text>
+    <text x="54" y="20" fill="#1c1b18" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">학소 철학관 (鶴巢哲學館)</text>
+    <text x="54" y="42" fill="#434039" font-family="Apple SD Gothic Neo, sans-serif" font-size="14">시간의 기록 속에서 오늘의 길을 묻다 · 대문 시각 시안</text>
+  </g>
+</svg>

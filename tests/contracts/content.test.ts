@@ -10,6 +10,7 @@ import {
 } from '../../src/data/business';
 import { CONSULTATION_TOPICS, EMAIL_CONSULTATION_STEPS } from '../../src/data/consultation';
 import { FAQ_ITEMS } from '../../src/data/faq';
+import { GALLERY_ITEMS, HERO_BANNER_IMAGE } from '../../src/data/gallery';
 import { sanitizeAnalyticsEvent } from '../../src/lib/analytics/events';
 import { filterApprovedEntries, isPubliclyApproved, type ContentEntryLike } from '../../src/lib/content/filter';
 
@@ -63,6 +64,22 @@ describe('사업 정보 및 이메일 공란 분기 계약 (Stage 01, 05)', () =
 
     const combinedText = JSON.stringify({ BUSINESS_INFO, CONSULTATION_TOPICS, EMAIL_CONSULTATION_STEPS, FAQ_ITEMS });
     expect(combinedText).not.toMatch(/100%\s*적중|무조건\s*성공|이메일\s*상담은\s*무료로\s*제공/);
+  });
+
+  it('대문 비주얼(Hero)과 갤러리 항목이 모두 유효한 정적 자산 경로·대체 텍스트(alt)·실사 구분 표기를 갖춘다', () => {
+    expect(HERO_BANNER_IMAGE.src).toMatch(/^\/images\/gallery\/.+\.(svg|webp|jpg|png)$/);
+    expect(HERO_BANNER_IMAGE.alt.length).toBeGreaterThan(10);
+    expect(GALLERY_ITEMS.length).toBeGreaterThanOrEqual(4);
+
+    for (const item of GALLERY_ITEMS) {
+      expect(item.src).toMatch(/^\/images\/gallery\/.+\.(svg|webp|jpg|png)$/);
+      expect(item.alt.trim().length).toBeGreaterThan(10);
+      expect(item.width).toBeGreaterThan(0);
+      expect(item.height).toBeGreaterThan(0);
+      expect(item.rightsNote.trim().length).toBeGreaterThan(5);
+      const assetPath = path.resolve(process.cwd(), 'public', item.src.replace(/^\//, ''));
+      expect(fs.existsSync(assetPath)).toBe(true);
+    }
   });
 });
 

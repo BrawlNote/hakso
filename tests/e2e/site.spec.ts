@@ -6,7 +6,7 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
   test('7개 필수 화면 폭(320/390/430/768/800/1024/1440px)에서 홈·상담·문의·체험 화면 가로 넘침 없음 확인', async ({
     page,
   }) => {
-    const targetPaths = ['/', '/consultation/', '/booking/', '/saju/'];
+    const targetPaths = ['/', '/gallery/', '/consultation/', '/booking/', '/saju/'];
 
     for (const width of VIEWPORT_WIDTHS) {
       await page.setViewportSize({ width, height: 844 });
@@ -42,6 +42,32 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
     expect(footerDts).toContain('소재지');
     expect(footerDts).not.toContain('대표');
     expect(footerDts).not.toContain('상담 이메일');
+
+    // 첫 화면 대문 비주얼(Hero)과 갤러리 미리보기 노출 확인
+    const heroImg = page.locator('.hero-visual-frame img');
+    await expect(heroImg).toBeVisible();
+    await expect(page.locator('.home-gallery-card')).toHaveCount(4);
+  });
+
+  test('갤러리(/gallery/): 카테고리 필터 전환 및 라이트박스 확대 모달 동작 검증', async ({ page }) => {
+    await page.goto('/gallery/');
+    await expect(page.locator('h1')).toContainText('학소 갤러리');
+    await expect(page.locator('.gallery-card')).toHaveCount(4);
+
+    // 서재·공간 시안 필터 클릭 시 2개 항목만 표시되는지 확인
+    await page.click('[data-filter-category="서재·공간 시안"]');
+    await expect(page.locator('.gallery-card:visible')).toHaveCount(2);
+
+    // 전체 보기 복귀
+    await page.click('[data-filter-category="전체"]');
+    await expect(page.locator('.gallery-card:visible')).toHaveCount(4);
+
+    // 첫 번째 이미지 클릭 시 라이트박스 열림 및 닫기 확인
+    await page.locator('.gallery-thumb-btn').first().click();
+    const lightbox = page.locator('#gallery-lightbox');
+    await expect(lightbox).toBeVisible();
+    await page.click('#lightbox-close');
+    await expect(lightbox).toBeHidden();
   });
 
   test('사주 체험(/saju/): 정상 입력 -> 확인 단계 -> 결과 표시 -> 시간 모름 전환 -> 오류 복구 -> 새로고침 초기화 검증', async ({

@@ -4,6 +4,7 @@ import EmailConsultationCta from '../components/EmailConsultationCta.astro';
 import { BUSINESS_INFO, hasConsultationEmail } from '../data/business';
 import { CONSULTATION_TOPICS, EMAIL_CONSULTATION_STEPS } from '../data/consultation';
 import { FAQ_ITEMS } from '../data/faq';
+import { GALLERY_ITEMS, HERO_BANNER_IMAGE } from '../data/gallery';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { filterApprovedEntries } from '../lib/content/filter';
 
@@ -13,6 +14,7 @@ const rawNotices = await getCollection('notices');
 const approvedArticles = filterApprovedEntries(rawArticles).slice(0, 3);
 const approvedNotices = filterApprovedEntries(rawNotices).slice(0, 2);
 const homeFaqs = FAQ_ITEMS.slice(0, 5);
+const homeGalleryPreview = GALLERY_ITEMS.slice(0, 4);
 ---
 
 <SiteLayout
@@ -37,31 +39,61 @@ const homeFaqs = FAQ_ITEMS.slice(0, 5);
     )
   }
 
-  <!-- 1. 첫 화면 (Hero) -->
+  <!-- 1. 첫 화면 (Hero 대문 비주얼 + 핵심 소개) -->
   <section class="section hero-section">
     <div class="container">
-      <div class="hero-badges">
-        <span class="badge">홈페이지 기본 사주 무료</span>
-        <span class:list={['badge', { 'badge-warn': !emailReady }]}>
-          {emailReady ? '이메일 상담 운영 중' : '초기 이메일 상담 준비 중'}
-        </span>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badges">
+            <span class="badge">홈페이지 기본 사주 무료</span>
+            <span class:list={['badge', { 'badge-warn': !emailReady }]}>
+              {emailReady ? '이메일 상담 운영 중' : '초기 이메일 상담 준비 중'}
+            </span>
+          </div>
+          <h1>
+            삶의 갈림길에서,<br />
+            사주 명리의 이치로 오늘의 방향을 함께 살핍니다
+          </h1>
+          <p class="hero-lead">
+            <strong>{BUSINESS_INFO.name}</strong>은 막연한 불안이나 단정적인 예언 대신, 출생 시점의 명식(命式) 구조와 현재 마주한 선택지를 차분한 언어로 정리합니다. 방문자 누구나 만세력 기반 <strong>무료 기본 사주 체험</strong>을 먼저 이용해보실 수 있으며, 깊이 있는 개별 상담은 <strong>이메일 서면 상담</strong>으로 진행됩니다.
+          </p>
+          <div class="btn-row hero-actions">
+            <a href="/saju/" class="btn btn-primary">무료 사주 체험하기</a>
+            <a href="/booking/" class="btn btn-secondary">
+              {emailReady ? '이메일 상담 문의하기' : '이메일 상담 안내 (준비 중)'}
+            </a>
+            <a href="/gallery/" class="btn btn-secondary">학소 갤러리 보기</a>
+          </div>
+          <p class="hero-subnote">
+            소재지: {BUSINESS_INFO.address.full} · 초기 상담은 이메일 상담으로만 운영하며 현장 방문·전화 접수는 받지 않습니다.
+          </p>
+        </div>
+
+        <figure class="hero-visual-card" data-protected-content="true">
+          <div class="hero-visual-frame">
+            <img
+              src={HERO_BANNER_IMAGE.src}
+              alt={HERO_BANNER_IMAGE.alt}
+              width={HERO_BANNER_IMAGE.width}
+              height={HERO_BANNER_IMAGE.height}
+              loading="eager"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+          <figcaption class="hero-visual-caption">
+            <div class="hero-visual-caption-top">
+              <strong>{HERO_BANNER_IMAGE.title}</strong>
+              {
+                !HERO_BANNER_IMAGE.isActualPhoto && (
+                  <span class="badge badge-warn">시안 일러스트 · 실사 교체 가능</span>
+                )
+              }
+            </div>
+            <span>{HERO_BANNER_IMAGE.description}</span>
+          </figcaption>
+        </figure>
       </div>
-      <h1>
-        삶의 갈림길에서,<br />
-        사주 명리의 이치로 오늘의 방향을 함께 살핍니다
-      </h1>
-      <p class="hero-lead">
-        <strong>{BUSINESS_INFO.name}</strong>은 막연한 불안이나 단정적인 예언 대신, 출생 시점의 명식(命式) 구조와 현재 마주한 선택지를 차분한 언어로 정리합니다. 방문자 누구나 만세력 기반 <strong>무료 기본 사주 체험</strong>을 먼저 이용해보실 수 있으며, 깊이 있는 개별 상담은 <strong>이메일 서면 상담</strong>으로 진행됩니다.
-      </p>
-      <div class="btn-row hero-actions">
-        <a href="/saju/" class="btn btn-primary">무료 사주 체험하기</a>
-        <a href="/booking/" class="btn btn-secondary">
-          {emailReady ? '이메일 상담 문의하기' : '이메일 상담 안내 (준비 중)'}
-        </a>
-      </div>
-      <p class="hero-subnote">
-        소재지: {BUSINESS_INFO.address.full} · 초기 상담은 이메일 상담으로만 운영하며 현장 방문·전화 접수는 받지 않습니다.
-      </p>
     </div>
   </section>
 
@@ -112,6 +144,53 @@ const homeFaqs = FAQ_ITEMS.slice(0, 5);
       </div>
       <div class="btn-row" style="margin-top: var(--space-5);">
         <a href="/about/" class="btn btn-secondary">학소 소개 자세히 읽기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3-2. 학소 갤러리 미리보기 -->
+  <section class="section" data-protected-content="true">
+    <div class="container">
+      <div class="section-header-row">
+        <div>
+          <h2>학소 갤러리</h2>
+          <p style="margin-bottom: 0;">
+            학소(鶴巢)가 지향하는 고요한 서재의 분위기와 사주 명리 상징을 담은 공간·상징 갤러리입니다.
+          </p>
+        </div>
+        <a href="/gallery/" class="btn btn-secondary">갤러리 전체 보기</a>
+      </div>
+
+      <div class="home-gallery-grid" style="margin-top: var(--space-5);">
+        {
+          homeGalleryPreview.map((item) => (
+            <article class="card home-gallery-card">
+              <a href="/gallery/" class="home-gallery-thumb-link" aria-label={`${item.title} 갤러리 상세 보기`}>
+                <div class="home-gallery-thumb">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={item.width}
+                    height={item.height}
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </div>
+              </a>
+              <div class="home-gallery-meta">
+                <div class="home-gallery-badges">
+                  <span class="badge">{item.category}</span>
+                  {!item.isActualPhoto && <span class="badge badge-warn">시안 일러스트</span>}
+                </div>
+                <h3>
+                  <a href="/gallery/">{item.title}</a>
+                </h3>
+                <p>{item.description}</p>
+              </div>
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -278,6 +357,20 @@ const homeFaqs = FAQ_ITEMS.slice(0, 5);
     background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-primary) 100%);
   }
 
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: var(--space-8);
+    }
+  }
+
   .hero-badges {
     display: flex;
     flex-wrap: wrap;
@@ -299,6 +392,138 @@ const homeFaqs = FAQ_ITEMS.slice(0, 5);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     margin: 0;
+  }
+
+  .hero-visual-card {
+    margin: 0;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .hero-visual-frame {
+    position: relative;
+    aspect-ratio: 1200 / 640;
+    background-color: #f3ede0;
+    overflow: hidden;
+  }
+
+  .hero-visual-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .hero-visual-caption {
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-bg-surface);
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .hero-visual-caption-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .hero-visual-caption strong {
+    font-family: var(--font-serif);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+  }
+
+  .section-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .home-gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .home-gallery-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .home-gallery-card {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-gallery-thumb-link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .home-gallery-thumb {
+    position: relative;
+    aspect-ratio: 800 / 540;
+    background-color: #f3ede0;
+    border-bottom: 1px solid var(--color-border-default);
+    overflow: hidden;
+  }
+
+  .home-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .home-gallery-thumb-link:hover .home-gallery-thumb img {
+    transform: scale(1.02);
+  }
+
+  .home-gallery-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .home-gallery-meta {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .home-gallery-meta h3 {
+    font-size: var(--text-lg);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .home-gallery-meta h3 a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  .home-gallery-meta h3 a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+  }
+
+  .home-gallery-meta p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
   }
 
   .topic-card ul {

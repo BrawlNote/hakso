@@ -45,6 +45,10 @@ npm run test:e2e
    - 반영 후 반드시 `npm test` 및 모바일 실기기에서 메일 앱 연결과 주소 복사 동작을 확인한다.
 3. **소재지 안내 변경**:
    - 현재 확정 주소(`서울 강북구 한천로 1167 3층`)는 `BUSINESS_INFO.address`에 설정되어 있으며, `visitReceptionOpen: false`를 통해 현장 방문 접수를 받지 않음을 명시하고 있다.
+4. **첫 화면 대문 사진(Hero) 및 갤러리(`src/data/gallery.ts`) 실사 교체 방법**:
+   - 실제 학소 내부·서재 사진을 촬영한 후 `public/images/gallery/` 폴더에 이미지 파일(WebP/JPG/PNG 권장)을 저장한다.
+   - `src/data/gallery.ts`의 `HERO_BANNER_IMAGE` 및 `GALLERY_ITEMS`에서 `src`, `width`, `height`, `alt`, `description`, `rightsNote`를 수정한다.
+   - 실제 사진으로 교체한 항목은 타입 및 속성에서 시안 일러스트 배지 표기를 해제하거나 실제 촬영 사진임을 명시한다. (그 전까지는 허구 사진·AI 인물 사진 오인을 막기 위해 `"시안 일러스트"` 배지를 유지한다.)
 
 ---
 

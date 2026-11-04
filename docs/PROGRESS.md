@@ -21,13 +21,13 @@
 | 01 | 사업·콘텐츠 구조와 기술 결정 | 완료 | `src/data/business.ts`, `src/data/consultation.ts`, `src/data/faq.ts`, `docs/DECISIONS.md` |
 | 02 | 디자인·와이어프레임 | 완료 | `src/styles/tokens.css`, `src/styles/global.css`, `src/layouts/SiteLayout.astro` |
 | 03 | Astro·도구·CI 기반 | 완료 | `.nvmrc`, `.env.example`, `package.json`, `package-lock.json`, `astro.config.mjs`, `wrangler.jsonc`, `tsconfig.json`, `vitest.config.ts`, `playwright.config.ts` |
-| 04 | 홍보 페이지·공통 UI | 완료 | `src/components/*`, `/`, `/about/`, `/consultation/`, `/booking/`, `/visit/`, `/faq/`, `/articles/`, `/notices/`, `/privacy/`, `/terms/`, `/404.astro` |
+| 04 | 홍보 페이지·공통 UI·대문 비주얼·갤러리 | 완료 | `src/components/*`, `/`(대문 비주얼 + 갤러리 미리보기), `/gallery/`(분류 필터 + 라이트박스), `/about/`, `/consultation/`, `/booking/`, `/visit/`, `/faq/`, `/articles/`, `/notices/`, `/privacy/`, `/terms/`, `/404.astro` |
 | 05 | 콘텐츠·이메일 상담 안내 | 완료 | 소재지 반영, 대표/이메일 공란 숨김 및 준비 중 분기, `src/content.config.ts`, `src/lib/content/filter.ts` |
 | 06 | SEO·정책·A 미리보기 | 완료 | `src/pages/sitemap.xml.ts`, `public/robots.txt`, `public/_headers`, `scripts/verify-security.mjs` |
 | 07 | 만세력 후보·정책 비교 실험 | 완료 | `manseryeok@2.0.0` 선정 및 KASI `korean-lunar-calendar` 47,846일 전수 대조·`astronomy-engine` 절입 대조 (`docs/DECISIONS.md`) |
 | 08 | 공유 계산 모듈·기본 풀이 | 완료 | `src/lib/saju/` (`types.ts`, `korea-time.ts`, `interpretations.ts`, `engine.ts`, `index.ts`), `tests/unit/saju.test.ts` (68개 테스트 통과) |
 | 09 | 사주 입력·결과 화면 | 완료 | `src/pages/saju/index.astro` (입력→확인→결과 3단계, 브라우저 메모리 단독 처리, 침투/복제/스크래핑 방어) |
-| 10 | A+B 통합·Mac 검수 | 완료 | `check`, `build`, `test` (77건), `test:security`, `test:e2e` (Chromium + WebKit 12건 통과), `docs/TEST_EVIDENCE.md`, `docs/OPERATIONS.md` |
+| 10 | A+B 통합·Mac 검수 | 완료 | `check`, `build`, `test` (78건), `test:security` (26개 산출물), `test:e2e` (Chromium + WebKit 14건 통과), `docs/TEST_EVIDENCE.md`, `docs/OPERATIONS.md` |
 | 11~13 | 후속 유료 AI 풀이 (C) | 후속 계획만 (미착수) | 사용자 지시에 따라 초기 구현 제외 |
 | 14~15 | 운영 공개·전달 | 운영 정보 확정 대기 | 대표자명·상담 이메일·학소 계산 기준 최종 확정 및 배포 요청 시 실행 |
 

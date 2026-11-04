@@ -1,0 +1,373 @@
+---
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import { BUSINESS_INFO } from '../../data/business';
+import { GALLERY_ITEMS } from '../../data/gallery';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', '명리·오행 도해'] as const;
+---
+
+<SiteLayout
+  title="학소 갤러리"
+  description="학소 철학관의 대문 상징 비주얼, 서재·공간 분위기 시안 및 사주 명리 오행 도해 갤러리입니다."
+  canonicalPath="/gallery/"
+>
+  <section class="section">
+    <div class="container">
+      <div class="gallery-header-badges">
+        <span class="badge">학소 시각 자료실</span>
+        <span class="badge badge-warn">실제 공간 사진 등록 전 시안 일러스트 포함</span>
+      </div>
+      <h1 style="margin-top: var(--space-3);">학소 갤러리</h1>
+      <p>
+        <strong>{BUSINESS_INFO.name}</strong>의 공간 분위기와 사주 명리의 사계절·오행 원리를 담은 갤러리입니다. 실제 촬영 사진이 준비되기 전까지는 허구 사진이나 AI 인물 사진으로 오인되지 않도록 자체 제작한 전통 수묵·도해 시안을 표시하며, 실제 공간 사진 촬영 후 순차적으로 교체됩니다.
+      </p>
+
+      <!-- 카테고리 필터 버튼 -->
+      <div class="gallery-filter-row" role="toolbar" aria-label="갤러리 분류 필터">
+        {
+          categories.map((cat, idx) => (
+            <button
+              type="button"
+              class:list={['btn', idx === 0 ? 'btn-primary' : 'btn-secondary', 'gallery-filter-btn']}
+              data-filter-category={cat}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+            >
+              {cat}
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- 갤러리 그리드 (무단 드래그·우클릭 보호) -->
+      <div class="gallery-grid protected-saju-zone" data-protected-content="true" id="gallery-grid">
+        {
+          GALLERY_ITEMS.map((item, index) => (
+            <article class="card gallery-card" data-category={item.category}>
+              <button
+                type="button"
+                class="gallery-thumb-btn"
+                data-lightbox-index={index}
+                aria-label={`${item.title} 크게 보기`}
+              >
+                <div class="gallery-img-frame">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={item.width}
+                    height={item.height}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    draggable="false"
+                  />
+                </div>
+              </button>
+              <div class="gallery-card-body">
+                <div class="gallery-card-meta">
+                  <span class="badge">{item.category}</span>
+                  {!item.isActualPhoto && <span class="badge badge-warn">시안 일러스트</span>}
+                </div>
+                <h2 class="gallery-card-title">{item.title}</h2>
+                <p class="gallery-card-desc">{item.description}</p>
+                <p class="gallery-card-rights">출처·권리: {item.rightsNote}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 라이트박스 모달 (클릭 시 확대 보기) -->
+  <div
+    id="gallery-lightbox"
+    class="lightbox-backdrop protected-saju-zone"
+    data-protected-content="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lightbox-title"
+    hidden
+  >
+    <div class="lightbox-dialog card">
+      <div class="lightbox-top">
+        <span id="lightbox-category" class="badge"></span>
+        <button type="button" class="btn btn-secondary lightbox-close-btn" id="lightbox-close" aria-label="확대 창 닫기">
+          닫기 (Esc)
+        </button>
+      </div>
+      <div class="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="" draggable="false" />
+      </div>
+      <h2 id="lightbox-title" style="margin-top: var(--space-3); margin-bottom: var(--space-2); font-size: var(--text-xl);"></h2>
+      <p id="lightbox-desc" style="margin: 0 0 var(--space-2) 0;"></p>
+      <p id="lightbox-rights" style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);"></p>
+      <div class="btn-row lightbox-nav-row">
+        <button type="button" class="btn btn-secondary" id="lightbox-prev">이전 이미지</button>
+        <button type="button" class="btn btn-secondary" id="lightbox-next">다음 이미지</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>
+
+<script>
+  import { GALLERY_ITEMS } from '../../data/gallery';
+
+  (function initGalleryPage() {
+    const filterBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter-category]'));
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.gallery-card'));
+    const thumbBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lightbox-index]'));
+
+    const lightbox = document.getElementById('gallery-lightbox') as HTMLElement | null;
+    const lightboxClose = document.getElementById('lightbox-close') as HTMLButtonElement | null;
+    const lightboxPrev = document.getElementById('lightbox-prev') as HTMLButtonElement | null;
+    const lightboxNext = document.getElementById('lightbox-next') as HTMLButtonElement | null;
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+    const lightboxTitle = document.getElementById('lightbox-title') as HTMLElement | null;
+    const lightboxDesc = document.getElementById('lightbox-desc') as HTMLElement | null;
+    const lightboxRights = document.getElementById('lightbox-rights') as HTMLElement | null;
+    const lightboxCategory = document.getElementById('lightbox-category') as HTMLElement | null;
+    const grid = document.getElementById('gallery-grid');
+
+    let currentIndex = 0;
+
+    // 1. 카테고리 필터
+    for (const btn of filterBtns) {
+      btn.addEventListener('click', function () {
+        const selected = btn.getAttribute('data-filter-category') || '전체';
+        for (const b of filterBtns) {
+          const isTarget = b === btn;
+          b.setAttribute('aria-pressed', isTarget ? 'true' : 'false');
+          b.classList.toggle('btn-primary', isTarget);
+          b.classList.toggle('btn-secondary', !isTarget);
+        }
+        for (const card of cards) {
+          const cardCat = card.getAttribute('data-category');
+          card.hidden = selected !== '전체' && cardCat !== selected;
+        }
+      });
+    }
+
+    // 2. 라이트박스 열기/닫기/이동
+    function showLightboxAt(index: number) {
+      if (!lightbox || !lightboxImg || !lightboxTitle || !lightboxDesc || !lightboxRights || !lightboxCategory) {
+        return;
+      }
+      currentIndex = (index + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
+      const item = GALLERY_ITEMS[currentIndex];
+      lightboxImg.src = item.src;
+      lightboxImg.alt = item.alt;
+      lightboxCategory.textContent = item.category;
+      lightboxTitle.textContent = item.title;
+      lightboxDesc.textContent = item.description;
+      lightboxRights.textContent = `출처·권리: ${item.rightsNote}`;
+      lightbox.hidden = false;
+      lightboxClose?.focus();
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.hidden = true;
+    }
+
+    for (const thumb of thumbBtns) {
+      thumb.addEventListener('click', function () {
+        const idx = Number(thumb.getAttribute('data-lightbox-index') || '0');
+        showLightboxAt(idx);
+      });
+    }
+
+    lightboxClose?.addEventListener('click', closeLightbox);
+    lightboxPrev?.addEventListener('click', function () {
+      showLightboxAt(currentIndex - 1);
+    });
+    lightboxNext?.addEventListener('click', function () {
+      showLightboxAt(currentIndex + 1);
+    });
+
+    lightbox?.addEventListener('click', function (ev) {
+      if (ev.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (!lightbox || lightbox.hidden) return;
+      if (ev.key === 'Escape') {
+        closeLightbox();
+      } else if (ev.key === 'ArrowLeft') {
+        showLightboxAt(currentIndex - 1);
+      } else if (ev.key === 'ArrowRight') {
+        showLightboxAt(currentIndex + 1);
+      }
+    });
+
+    // 이미지 무단 우클릭·드래그 방지
+    for (const zone of [grid, lightbox]) {
+      zone?.addEventListener('contextmenu', function (ev) {
+        ev.preventDefault();
+      });
+      zone?.addEventListener('dragstart', function (ev) {
+        ev.preventDefault();
+      });
+    }
+  })();
+</script>
+
+<style>
+  .gallery-header-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .gallery-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-5) 0;
+  }
+
+  .gallery-filter-btn {
+    min-height: 44px;
+    padding: 0.45rem 1rem;
+    font-size: var(--text-sm);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .gallery-card {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gallery-card[hidden] {
+    display: none !important;
+  }
+
+  .gallery-thumb-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: var(--color-bg-subtle);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .gallery-img-frame {
+    width: 100%;
+    aspect-ratio: 800 / 540;
+    overflow: hidden;
+    background-color: #f3ede0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .gallery-img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .gallery-thumb-btn:hover .gallery-img-frame img {
+    transform: scale(1.02);
+  }
+
+  .gallery-card-body {
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .gallery-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .gallery-card-title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+
+  .gallery-card-desc {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .gallery-card-rights {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* 라이트박스 모달 */
+  .lightbox-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background-color: rgba(28, 27, 24, 0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    overflow-y: auto;
+  }
+
+  .lightbox-backdrop[hidden] {
+    display: none !important;
+  }
+
+  .lightbox-dialog {
+    width: 100%;
+    max-width: 860px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .lightbox-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .lightbox-img-wrap {
+    width: 100%;
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--color-border-default);
+  }
+
+  .lightbox-img-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .lightbox-nav-row {
+    margin-top: var(--space-4);
+    justify-content: space-between;
+  }
+</style>

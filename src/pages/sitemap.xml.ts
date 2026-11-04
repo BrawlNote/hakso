@@ -6,6 +6,7 @@ import { filterApprovedEntries } from '../lib/content/filter';
 const PUBLIC_STATIC_PATHS = [
   '/',
   '/about/',
+  '/gallery/',
   '/consultation/',
   '/booking/',
   '/visit/',

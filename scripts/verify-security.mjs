@@ -11,6 +11,7 @@ if (!fs.existsSync(distDir)) {
 const requiredFiles = [
   'index.html',
   'about/index.html',
+  'gallery/index.html',
   'consultation/index.html',
   'booking/index.html',
   'visit/index.html',

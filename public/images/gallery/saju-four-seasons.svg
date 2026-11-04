@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" role="img" aria-label="사주 오행(목·화·토·금·수) 상생 순환도 일러스트">
+  <rect width="800" height="540" fill="#f7f3e8" />
+  <rect x="20" y="20" width="760" height="500" rx="8" fill="none" stroke="#9e8f75" stroke-width="1.5" />
+
+  <text x="400" y="68" text-anchor="middle" fill="#1c1b18" font-family="AppleMyungjo, serif" font-size="24" font-weight="700">오행(五行)의 균형과 사계절 절기 순환도</text>
+  <text x="400" y="96" text-anchor="middle" fill="#5c574f" font-family="Apple SD Gothic Neo, sans-serif" font-size="14">연·월·일·시 기둥의 천간과 지지가 이루는 다섯 기운의 조화</text>
+
+  <!-- 상생 원형 궤도 -->
+  <circle cx="400" cy="305" r="145" fill="none" stroke="#b6ab96" stroke-width="2" stroke-dasharray="6 6" />
+
+  <!-- 화(火) 상단 -->
+  <g transform="translate(400, 160)">
+    <circle cx="0" cy="0" r="42" fill="#f9e6e4" stroke="#7d231b" stroke-width="2" />
+    <text x="0" y="-2" text-anchor="middle" fill="#7d231b" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">火</text>
+    <text x="0" y="20" text-anchor="middle" fill="#7d231b" font-family="Apple SD Gothic Neo, sans-serif" font-size="12" font-weight="600">화 · 여름 · 표현</text>
+  </g>
+
+  <!-- 토(土) 우상단 -->
+  <g transform="translate(538, 260)">
+    <circle cx="0" cy="0" r="42" fill="#f6eedc" stroke="#634712" stroke-width="2" />
+    <text x="0" y="-2" text-anchor="middle" fill="#634712" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">土</text>
+    <text x="0" y="20" text-anchor="middle" fill="#634712" font-family="Apple SD Gothic Neo, sans-serif" font-size="12" font-weight="600">토 · 환절 · 중재</text>
+  </g>
+
+  <!-- 금(金) 우하단 -->
+  <g transform="translate(485, 422)">
+    <circle cx="0" cy="0" r="42" fill="#eceff2" stroke="#2e3b46" stroke-width="2" />
+    <text x="0" y="-2" text-anchor="middle" fill="#2e3b46" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">金</text>
+    <text x="0" y="20" text-anchor="middle" fill="#2e3b46" font-family="Apple SD Gothic Neo, sans-serif" font-size="12" font-weight="600">금 · 가을 · 결실</text>
+  </g>
+
+  <!-- 수(水) 좌하단 -->
+  <g transform="translate(315, 422)">
+    <circle cx="0" cy="0" r="42" fill="#e3ecf5" stroke="#1c3d5a" stroke-width="2" />
+    <text x="0" y="-2" text-anchor="middle" fill="#1c3d5a" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">水</text>
+    <text x="0" y="20" text-anchor="middle" fill="#1c3d5a" font-family="Apple SD Gothic Neo, sans-serif" font-size="12" font-weight="600">수 · 겨울 · 지혜</text>
+  </g>
+
+  <!-- 목(木) 좌상단 -->
+  <g transform="translate(262, 260)">
+    <circle cx="0" cy="0" r="42" fill="#e4f0e8" stroke="#1b4d2e" stroke-width="2" />
+    <text x="0" y="-2" text-anchor="middle" fill="#1b4d2e" font-family="AppleMyungjo, serif" font-size="22" font-weight="700">木</text>
+    <text x="0" y="20" text-anchor="middle" fill="#1b4d2e" font-family="Apple SD Gothic Neo, sans-serif" font-size="12" font-weight="600">목 · 봄 · 생장</text>
+  </g>
+</svg>
