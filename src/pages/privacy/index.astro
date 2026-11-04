@@ -1,0 +1,51 @@
+---
+import { BUSINESS_INFO, hasConsultationEmail } from '../../data/business';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const emailReady = hasConsultationEmail(BUSINESS_INFO);
+---
+
+<SiteLayout
+  title="개인정보 처리 안내"
+  description="학소 철학관 홈페이지의 무료 사주 체험(브라우저 메모리 처리) 및 이메일 상담 관련 개인정보 처리 기준을 안내합니다."
+  canonicalPath="/privacy/"
+>
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <span class="badge">개인정보 최소 처리 원칙</span>
+      <h1 style="margin-top: var(--space-3);">개인정보 처리 안내</h1>
+      <p>
+        <strong>{BUSINESS_INFO.name}</strong>은 방문자의 개인정보를 최소한으로 처리하는 것을 원칙으로 합니다. 홈페이지에서 제공하는 <strong>무료 기본 사주 체험</strong>과 향후 개시될 <strong>이메일 서면 상담</strong>의 데이터 흐름을 구분하여 안내합니다.
+      </p>
+
+      <div class="card" style="margin-top: var(--space-5);">
+        <h2>1. 홈페이지 무료 기본 사주 체험의 데이터 처리</h2>
+        <ul>
+          <li><strong>이름·연락처 미수집:</strong> 무료 사주 체험은 성명, 전화번호, 이메일 주소, 주민등록번호를 요구하지 않습니다.</li>
+          <li><strong>브라우저 메모리 단독 처리:</strong> 입력하신 생년월일시와 산출된 사주 명식·기본 풀이는 방문자의 웹 브라우저 메모리 안에서만 계산·표시됩니다.</li>
+          <li><strong>영구 저장 및 URL 기록 없음:</strong> 앱 자체의 데이터베이스, `localStorage`, 쿠키, 공유 URL 쿼리(`?birth=...` 등)에 출생 정보나 사주 결과를 남기지 않습니다. 화면을 새로고침하거나 브라우저 탭을 닫으면 입력값과 결과는 즉시 소멸합니다.</li>
+        </ul>
+
+        <h2>2. 이메일 상담 문의 시의 개인정보 처리</h2>
+        <ul>
+          <li><strong>처리 경로:</strong> 홈페이지 내부에 자체 상담 접수 폼이나 DB를 두지 않으며, 방문자가 본인의 이메일 서비스에서 학소 상담용 이메일로 직접 메일을 발송하는 방식으로 진행됩니다.</li>
+          <li><strong>자동 첨부 없음:</strong> 홈페이지 무료 사주 체험에서 입력한 생년월일이나 결과가 이메일 본문에 자동으로 삽입되거나 전송되지 않습니다.</li>
+          <li><strong>보유 및 파기 기준:</strong> {emailReady ? `상담 문의 이메일(${BUSINESS_INFO.consultationEmail})로 접수된 내용은 상담 회신 및 사후 안내 목적 범위에서만 보관하며, 이용자 삭제 요청 시 지체 없이 파기합니다.` : '현재 상담 전용 이메일 주소 개설 준비 중이며, 실제 이메일 상담 개시 전에 구체적인 수집 항목·보유 기간·삭제 요청 창구를 확정하여 본 안내에 반영합니다.'}</li>
+        </ul>
+
+        <h2>3. 인프라 및 외부 전송 안내</h2>
+        <ul>
+          <li>본 홈페이지는 정적 웹 호스팅 인프라(Cloudflare 등)를 통해 제공되며, 웹 서버의 기본적인 네트워크 접속 메타데이터(IP 주소, 요청 경로 등)는 호스팅 인프라의 보안·전송 정책에 따라 단기 처리될 수 있습니다.</li>
+          <li>단, 사주 생년월일 입력값과 명식 결과는 서버 API나 외부 AI 공급자로 전송되지 않습니다.</li>
+        </ul>
+
+        <h2>4. 이용자의 권리와 문의 창구</h2>
+        <p style="margin-bottom: 0;">
+          {emailReady
+            ? `개인정보 열람·정정·삭제 요청은 상담 이메일(${BUSINESS_INFO.consultationEmail})을 통해 접수하실 수 있습니다.`
+            : '현재 상담 및 개인정보 문의 전용 이메일 주소를 준비하고 있으며, 상담 개시 전까지는 홈페이지 내에서 어떠한 개인 식별 정보도 수집·보관하지 않습니다.'}
+        </p>
+      </div>
+    </div>
+  </section>
+</SiteLayout>

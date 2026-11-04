@@ -1,0 +1,40 @@
+{
+  "name": "hakso",
+  "version": "0.1.0",
+  "private": true,
+  "description": "학소 철학관 홍보 홈페이지 및 무료 기본 사주 체험 (A+B)",
+  "type": "module",
+  "packageManager": "npm@11.16.0",
+  "engines": {
+    "node": ">=22.23.4",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check": "astro check",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:saju": "vitest run tests/unit/saju.test.ts",
+    "test:content": "vitest run tests/contracts/content.test.ts",
+    "test:security": "node scripts/verify-security.mjs",
+    "test:e2e": "playwright test",
+    "cf:dev": "npm run build && wrangler dev",
+    "deploy:preview": "npm run build && wrangler deploy --env preview",
+    "deploy:production": "node scripts/guard-production-deploy.mjs && npm run build && wrangler deploy --env production"
+  },
+  "dependencies": {
+    "astro": "7.4.5",
+    "manseryeok": "2.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "astronomy-engine": "2.1.19",
+    "korean-lunar-calendar": "0.4.0",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0",
+    "wrangler": "4.157.0"
+  }
+}

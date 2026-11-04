@@ -1,0 +1,117 @@
+---
+import { BUSINESS_INFO, getSafeMailtoHref, hasConsultationEmail } from '../data/business';
+
+interface Props {
+  heading?: string;
+  description?: string;
+  showBookingLink?: boolean;
+}
+
+const {
+  heading = '학소 철학관 이메일 상담 안내',
+  description = '무료 기본 사주 체험으로 기초 명식을 확인하신 뒤, 개인의 구체적인 상황과 선택 시점에 대한 1:1 서면 풀이가 필요하시다면 이메일 상담 절차를 확인해 주세요.',
+  showBookingLink = true,
+} = Astro.props;
+
+const emailReady = hasConsultationEmail(BUSINESS_INFO);
+const mailtoHref = getSafeMailtoHref(BUSINESS_INFO);
+---
+
+<section class="card email-cta-card" aria-label="이메일 상담 연결 안내">
+  <div class="email-cta-header">
+    <span class:list={['badge', { 'badge-warn': !emailReady }]}>
+      {emailReady ? '이메일 상담 접수 가능' : '이메일 상담 준비 중'}
+    </span>
+    <h2 class="email-cta-title">{heading}</h2>
+  </div>
+
+  <p class="email-cta-desc">{description}</p>
+
+  {
+    emailReady && mailtoHref ? (
+      <div class="email-ready-box">
+        <p class="email-address-line">
+          상담 문의 이메일: <strong>{BUSINESS_INFO.consultationEmail}</strong>
+        </p>
+        <div class="btn-row">
+          <a href={mailtoHref} class="btn btn-primary" data-cta-action="email-compose">
+            메일 앱으로 상담 문의 작성
+          </a>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-copy-email={BUSINESS_INFO.consultationEmail}
+            aria-label="상담 이메일 주소 복사"
+          >
+            이메일 주소 복사
+          </button>
+        </div>
+        <p class="email-status-note">
+          안내: 메일 작성 창을 열거나 주소를 복사한 것만으로는 상담이 발송·접수·확정되지 않습니다. 메일 발송 후 운영자의 접수 확인 및 진행·비용 안내 회신을 거쳐 상담이 확정됩니다.
+        </p>
+      </div>
+    ) : (
+      <div class="notice-box warning">
+        <p style="margin: 0 0 0.5rem 0; font-weight: 700; color: var(--color-text-primary);">
+          현재 상담 전용 이메일 주소를 준비하고 있습니다.
+        </p>
+        <p style="margin: 0; font-size: var(--text-sm);">
+          초기 상담은 이메일 상담 방식으로만 진행되며(전화·방문·메신저 예약 미운영), 상담용 이메일 주소와 세부 비용·회신 기한이 확정되는 대로 본 페이지에 공지됩니다. 홈페이지의 무료 기본 사주 체험은 지금 바로 이용하실 수 있습니다.
+        </p>
+      </div>
+    )
+  }
+
+  <div class="btn-row" style="margin-top: var(--space-4);">
+    {
+      showBookingLink && (
+        <a href="/booking/" class="btn btn-secondary">
+          이메일 상담 절차 자세히 보기
+        </a>
+      )
+    }
+    <a href="/saju/" class="btn btn-primary">무료 기본 사주 체험하기</a>
+  </div>
+</section>
+
+<style>
+  .email-cta-card {
+    background-color: var(--color-bg-surface);
+    border: 1.5px solid var(--color-border-strong);
+  }
+
+  .email-cta-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .email-cta-title {
+    margin: 0;
+  }
+
+  .email-cta-desc {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .email-ready-box {
+    background-color: var(--color-bg-subtle);
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-3);
+  }
+
+  .email-address-line {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+  }
+
+  .email-status-note {
+    margin: var(--space-3) 0 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+</style>

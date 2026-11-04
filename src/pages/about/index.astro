@@ -1,0 +1,125 @@
+---
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import { BUSINESS_INFO, getVisibleBusinessFacts } from '../../data/business';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const visibleFacts = getVisibleBusinessFacts(BUSINESS_INFO);
+---
+
+<SiteLayout
+  title="학소 소개"
+  description="학소 철학관의 명리 해석 원칙, 상담 태도, 그리고 사실에 기반한 운영 정보를 안내합니다."
+  canonicalPath="/about/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="badge">학소 철학관 소개</span>
+      <h1 style="margin-top: var(--space-3);">사주 명리의 구조를 차분하고 정직한 언어로 풀어냅니다</h1>
+      <p>
+        <strong>{BUSINESS_INFO.name}</strong>은 생년월일시라는 시간의 기록을 통해 각자가 지닌 기질의 결을 살피고, 오늘 마주한 고민을 보다 명료한 질문으로 정돈할 수 있도록 돕는 공간입니다.
+      </p>
+      <p>{BUSINESS_INFO.counselorProfile.summary}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>학소가 지키는 세 가지 상담 원칙</h2>
+      <div class="grid-3" style="margin-top: var(--space-5);">
+        {
+          BUSINESS_INFO.counselorProfile.verifiedPrinciples.map((item, index) => (
+            <article class="card">
+              <span class="badge">원칙 0{index + 1}</span>
+              <h3 style="margin-top: var(--space-3);">
+                {index === 0 ? '계산 근거와 한계의 투명한 고지' : index === 1 ? '공포 조장 및 단정적 예언 배제' : '기록으로 남는 차분한 서면 상담'}
+              </h3>
+              <p style="margin-bottom: 0;">{item}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>우리가 하지 않는 것</h2>
+      <div class="card">
+        <ul style="margin: 0; padding-left: 1.25rem;">
+          <li>확인되지 않은 수상 경력, 방송 출연, 누적 상담 건수, 가짜 후기를 홍보 문구로 만들지 않습니다.</li>
+          <li>출생 시간을 모르는 내담자에게 임의의 시각(예: 낮 12시)을 넣어 완전한 사주팔자인 것처럼 꾸며내지 않습니다.</li>
+          <li>질병·사망·파산·이혼을 단정하거나 특정 투자 종목·의료 행위를 지시하지 않습니다.</li>
+          <li>불안을 자극하여 고액의 부적이나 유료 결제를 유도하지 않습니다.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>확인된 기본 정보</h2>
+      <div class="card">
+        <dl class="about-facts">
+          {
+            visibleFacts.map((fact) => (
+              <div class="about-fact-row">
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p style="margin: var(--space-4) 0 0 0; font-size: var(--text-sm); color: var(--color-text-muted);">
+          {BUSINESS_INFO.address.note}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .about-facts {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .about-fact-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .about-fact-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .about-fact-row dt {
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .about-fact-row dd {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .about-fact-row {
+      flex-direction: row;
+      gap: var(--space-4);
+    }
+    .about-fact-row dt {
+      min-width: 160px;
+    }
+  }
+</style>

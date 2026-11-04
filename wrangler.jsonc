@@ -1,0 +1,18 @@
+{
+  // 학소 철학관 Cloudflare Workers Static Assets 설정 (A+B 정적 배포 기준)
+  // 주의: 유료 AI API(C)는 현재 구현 범위가 아니므로 API Worker 엔트리를 두지 않고 정적 자산만 제공합니다.
+  "name": "hakso-preview",
+  "compatibility_date": "2026-11-04",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "env": {
+    "preview": {
+      "name": "hakso-preview"
+    },
+    "production": {
+      "name": "hakso-production"
+    }
+  }
+}

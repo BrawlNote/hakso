@@ -1,0 +1,339 @@
+---
+import { getCollection } from 'astro:content';
+import EmailConsultationCta from '../components/EmailConsultationCta.astro';
+import { BUSINESS_INFO, hasConsultationEmail } from '../data/business';
+import { CONSULTATION_TOPICS, EMAIL_CONSULTATION_STEPS } from '../data/consultation';
+import { FAQ_ITEMS } from '../data/faq';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { filterApprovedEntries } from '../lib/content/filter';
+
+const emailReady = hasConsultationEmail(BUSINESS_INFO);
+const rawArticles = await getCollection('articles');
+const rawNotices = await getCollection('notices');
+const approvedArticles = filterApprovedEntries(rawArticles).slice(0, 3);
+const approvedNotices = filterApprovedEntries(rawNotices).slice(0, 2);
+const homeFaqs = FAQ_ITEMS.slice(0, 5);
+---
+
+<SiteLayout
+  title="학소 철학관 — 만세력 무료 기본 사주 체험 및 이메일 상담 안내"
+  description={BUSINESS_INFO.description}
+  canonicalPath="/"
+  includeStructuredData={true}
+>
+  {
+    approvedNotices.length > 0 && (
+      <section class="notice-banner" aria-label="주요 운영 공지">
+        <div class="container">
+          {approvedNotices.map((notice) => (
+            <p class="notice-banner-item">
+              <span class="badge">공지</span>
+              <a href={`/notices/${notice.id}/`}>{notice.data.title}</a>
+              <span class="notice-date">{notice.data.publishedAt}</span>
+            </p>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 1. 첫 화면 (Hero) -->
+  <section class="section hero-section">
+    <div class="container">
+      <div class="hero-badges">
+        <span class="badge">홈페이지 기본 사주 무료</span>
+        <span class:list={['badge', { 'badge-warn': !emailReady }]}>
+          {emailReady ? '이메일 상담 운영 중' : '초기 이메일 상담 준비 중'}
+        </span>
+      </div>
+      <h1>
+        삶의 갈림길에서,<br />
+        사주 명리의 이치로 오늘의 방향을 함께 살핍니다
+      </h1>
+      <p class="hero-lead">
+        <strong>{BUSINESS_INFO.name}</strong>은 막연한 불안이나 단정적인 예언 대신, 출생 시점의 명식(命式) 구조와 현재 마주한 선택지를 차분한 언어로 정리합니다. 방문자 누구나 만세력 기반 <strong>무료 기본 사주 체험</strong>을 먼저 이용해보실 수 있으며, 깊이 있는 개별 상담은 <strong>이메일 서면 상담</strong>으로 진행됩니다.
+      </p>
+      <div class="btn-row hero-actions">
+        <a href="/saju/" class="btn btn-primary">무료 사주 체험하기</a>
+        <a href="/booking/" class="btn btn-secondary">
+          {emailReady ? '이메일 상담 문의하기' : '이메일 상담 안내 (준비 중)'}
+        </a>
+      </div>
+      <p class="hero-subnote">
+        소재지: {BUSINESS_INFO.address.full} · 초기 상담은 이메일 상담으로만 운영하며 현장 방문·전화 접수는 받지 않습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2. 어떤 상담인가 (상담 주제) -->
+  <section class="section">
+    <div class="container">
+      <h2>어떤 고민을 함께 살피나요</h2>
+      <p>
+        학소 철학관은 정해진 운명을 일방적으로 통보하기보다, 내담자가 처한 현실적 맥락 안에서 명식의 강점과 보완점을 점검합니다.
+      </p>
+      <div class="grid-2" style="margin-top: var(--space-6);">
+        {
+          CONSULTATION_TOPICS.map((topic) => (
+            <article class="card topic-card">
+              <h3>{topic.title}</h3>
+              <p class="topic-subtitle">{topic.subtitle}</p>
+              <ul>
+                {topic.targetConcerns.map((concern) => (
+                  <li>{concern}</li>
+                ))}
+              </ul>
+              <div style="margin-top: var(--space-4);">
+                <a href={`/consultation/#topic-${topic.slug}`} class="btn btn-secondary">
+                  상담 범위와 준비 사항 보기
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 학소 소개 및 상담 원칙 (후기 대신 검증된 원칙 제시) -->
+  <section class="section">
+    <div class="container">
+      <h2>학소 철학관의 상담 태도와 원칙</h2>
+      <p>{BUSINESS_INFO.counselorProfile.summary}</p>
+      <div class="grid-3" style="margin-top: var(--space-6);">
+        {
+          BUSINESS_INFO.counselorProfile.verifiedPrinciples.map((principle, idx) => (
+            <div class="card">
+              <span class="badge" style="margin-bottom: var(--space-2);">원칙 0{idx + 1}</span>
+              <p style="margin: 0; color: var(--color-text-primary);">{principle}</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="btn-row" style="margin-top: var(--space-5);">
+        <a href="/about/" class="btn btn-secondary">학소 소개 자세히 읽기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 무료 사주 체험과 개별 이메일 상담의 범위 비교 -->
+  <section class="section">
+    <div class="container">
+      <h2>홈페이지 무료 사주 체험과 이메일 상담의 구분</h2>
+      <div class="grid-2" style="margin-top: var(--space-5);">
+        <div class="card">
+          <span class="badge">홈페이지 무료 제공</span>
+          <h3 style="margin-top: var(--space-2);">무료 기본 사주 체험</h3>
+          <ul>
+            <li>양력·음력·윤달 생년월일 및 출생 시각(또는 시간 모름) 기반 만세력 계산</li>
+            <li>입춘·절입 시각 및 과거 대한민국 표준시·서머타임 이력을 반영한 명식표 제공</li>
+            <li>일간·월지·표면 오행 분포에 따른 고정 기본 풀이 제공</li>
+            <li>이름·연락처 입력 불필요, 브라우저 메모리에서만 즉시 계산 (새로고침 시 삭제)</li>
+          </ul>
+          <div style="margin-top: var(--space-4);">
+            <a href="/saju/" class="btn btn-primary">무료 기본 사주 보러 가기</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class:list={['badge', { 'badge-warn': !emailReady }]}>
+            {emailReady ? '개별 유료 서면 상담' : '개별 서면 상담 · 준비 중'}
+          </span>
+          <h3 style="margin-top: var(--space-2);">1:1 이메일 서면 상담</h3>
+          <ul>
+            <li>개인의 구체적인 상황과 질문에 맞춘 심층 명식 검토 및 서면 답변</li>
+            <li>절입 경계·자시(23~24시) 경계 등 세밀한 대조가 필요한 사례 점검</li>
+            <li>홈페이지 무료 체험과 별도로 운영되는 유료 상담 (항목별 비용·회신 기한 추후 공지)</li>
+            <li>현재 상담 전용 이메일 주소 개설 및 접수 절차를 준비하고 있습니다</li>
+          </ul>
+          <div style="margin-top: var(--space-4);">
+            <a href="/booking/" class="btn btn-secondary">이메일 상담 안내 보기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 이메일 상담 진행 절차 -->
+  <section class="section">
+    <div class="container">
+      <h2>이메일 상담 진행 절차</h2>
+      <p>
+        학소 철학관은 자체 예약 데이터베이스에 개인정보를 쌓아두지 않고, 이메일을 통한 직접 문의와 접수 확인 방식으로 운영됩니다.
+      </p>
+      <div class="grid-2" style="margin-top: var(--space-5);">
+        {
+          EMAIL_CONSULTATION_STEPS.map((step) => (
+            <div class="card">
+              <span class="badge">단계 0{step.stepNumber}</span>
+              <h3 style="margin-top: var(--space-2);">{step.title}</h3>
+              <p>{step.description}</p>
+              <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">{step.statusNote}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 소재지 및 상담 방식 안내 -->
+  <section class="section">
+    <div class="container">
+      <h2>소재지 및 상담 운영 방식</h2>
+      <div class="card">
+        <p style="margin-top: 0;">
+          <strong>소재지:</strong> {BUSINESS_INFO.address.full}
+        </p>
+        <p>
+          <strong>상담 방식:</strong> 초기에는 <strong>이메일 상담만</strong> 진행합니다. 위 주소는 학소 철학관의 사업장 소재지 표기이며, 방문 상담이나 전화 예약 접수를 의미하지 않습니다.
+        </p>
+        <div class="btn-row">
+          <a href="/visit/" class="btn btn-secondary">소재지 안내 자세히 보기</a>
+          <a href="/booking/" class="btn btn-secondary">이메일 상담 안내</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 자주 묻는 질문 및 칼럼 -->
+  <section class="section">
+    <div class="container">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq-list" style="margin-top: var(--space-4);">
+        {
+          homeFaqs.map((faq) => (
+            <details class="card faq-item">
+              <summary class="faq-question">{faq.question}</summary>
+              <p class="faq-answer">{faq.answer}</p>
+            </details>
+          ))
+        }
+      </div>
+      <div class="btn-row" style="margin-top: var(--space-4);">
+        <a href="/faq/" class="btn btn-secondary">자주 묻는 질문 전체 보기</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>명리·상담 안내 칼럼</h2>
+      {
+        approvedArticles.length > 0 ? (
+          <div class="grid-3" style="margin-top: var(--space-4);">
+            {approvedArticles.map((article) => (
+              <article class="card">
+                <span class="badge">{article.data.category}</span>
+                <h3 style="margin-top: var(--space-2);">
+                  <a href={`/articles/${article.id}/`}>{article.data.title}</a>
+                </h3>
+                <p>{article.data.description}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="notice-box" style="margin-top: var(--space-4);">
+            <p style="margin: 0;">
+              학소 철학관의 직접 검수를 마친 칼럼만 공개됩니다. 현재 상담 준비 및 만세력 기초 칼럼 원고를 검수하고 있습니다.
+            </p>
+          </div>
+        )
+      }
+      <div class="btn-row" style="margin-top: var(--space-4);">
+        <a href="/articles/" class="btn btn-secondary">칼럼 목록 보기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 하단 문의 CTA -->
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .notice-banner {
+    background-color: var(--color-bg-accent-soft);
+    border-bottom: 1px solid var(--color-border-default);
+    padding: var(--space-2) 0;
+  }
+
+  .notice-banner-item {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    flex-wrap: wrap;
+  }
+
+  .notice-date {
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
+
+  .hero-section {
+    background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-primary) 100%);
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-lead {
+    font-size: var(--text-lg);
+    max-width: 72ch;
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-actions {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-subnote {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .topic-card ul {
+    padding-left: 1.2rem;
+    margin: var(--space-3) 0;
+  }
+
+  .topic-subtitle {
+    font-weight: 600;
+    color: var(--color-brand-primary);
+    margin-top: 0;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .faq-item {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .faq-question {
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+  }
+
+  .faq-answer {
+    margin: var(--space-3) 0 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-default);
+  }
+</style>

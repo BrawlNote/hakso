@@ -1,0 +1,27 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="페이지를 찾을 수 없습니다 (404)"
+  description="요청하신 페이지 주소를 찾을 수 없습니다. 학소 철학관 홈 또는 상담 안내 페이지로 이동해 주세요."
+  canonicalPath="/404.html"
+  noindex={true}
+>
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <div class="card" style="max-width: 640px; margin: var(--space-8) auto; text-align: center;">
+        <span class="badge badge-warn">404 Not Found</span>
+        <h1 style="margin-top: var(--space-3);">찾으시는 페이지가 없거나 이동되었습니다</h1>
+        <p>
+          입력하신 주소가 정확한지 다시 확인해 주세요. 개인 사주 체험 결과는 별도의 고유 URL로 저장되지 않으므로, 사주 체험을 다시 이용하시려면 아래 버튼을 눌러 이동해 주세요.
+        </p>
+        <div class="btn-row" style="justify-content: center; margin-top: var(--space-5);">
+          <a href="/" class="btn btn-primary">홈으로 돌아가기</a>
+          <a href="/saju/" class="btn btn-secondary">무료 사주 체험</a>
+          <a href="/booking/" class="btn btn-secondary">이메일 상담 안내</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</SiteLayout>

@@ -1,0 +1,126 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import MobileBottomBar from '../components/MobileBottomBar.astro';
+import { BUSINESS_INFO, hasConsultationEmail } from '../data/business';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  noindex?: boolean;
+  noarchive?: boolean;
+  includeStructuredData?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  noindex = false,
+  noarchive = false,
+  includeStructuredData = false,
+} = Astro.props;
+
+const deployEnv = import.meta.env.PUBLIC_DEPLOY_ENV || 'development';
+const isPreviewEnv = deployEnv === 'preview';
+const shouldNoIndex = noindex || isPreviewEnv;
+
+const normalizedPath = canonicalPath.endsWith('/') || canonicalPath.endsWith('.html')
+  ? canonicalPath
+  : `${canonicalPath}/`;
+const canonicalUrl = new URL(normalizedPath, BUSINESS_INFO.siteUrl).toString();
+const fullTitle = title.includes(BUSINESS_INFO.name) ? title : `${title} | ${BUSINESS_INFO.name}`;
+
+const robotsDirectives: string[] = [shouldNoIndex ? 'noindex, nofollow' : 'index, follow'];
+if (noarchive) {
+  robotsDirectives.push('noarchive', 'nosnippet', 'noimageindex');
+}
+
+const structuredData = includeStructuredData
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ProfessionalService',
+      name: BUSINESS_INFO.name,
+      description: BUSINESS_INFO.description,
+      url: BUSINESS_INFO.siteUrl,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: `${BUSINESS_INFO.address.street} ${BUSINESS_INFO.address.floor}`,
+        addressLocality: BUSINESS_INFO.address.region,
+        addressCountry: 'KR',
+      },
+      ...(hasConsultationEmail(BUSINESS_INFO) ? { email: BUSINESS_INFO.consultationEmail } : {}),
+    }
+  : null;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content={robotsDirectives.join(', ')} />
+    <meta name="referrer" content={noarchive ? 'no-referrer' : 'strict-origin-when-cross-origin'} />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none';"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={BUSINESS_INFO.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="ko_KR" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {
+      structuredData && (
+        <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+      )
+    }
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">본문 바로가기</a>
+    <Header currentPath={Astro.url.pathname} />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <MobileBottomBar />
+
+    <script is:inline>
+      // 외부 사이트의 무단 iframe 임베딩(클릭재킹·위젯 도용) 방어 및 이메일 복사 보조
+      (function () {
+        try {
+          if (window.top && window.top !== window.self) {
+            window.top.location.replace(window.self.location.href);
+          }
+        } catch (_e) {
+          // 교차 출처 프레임 안에서 접근 차단된 경우 본문 표시를 숨기고 직접 방문 유도
+          document.body.innerHTML =
+            '<div style="padding:2rem;font-family:sans-serif;">외부 프레임 내 무단 표시가 차단되었습니다. 학소 철학관 공식 홈페이지로 직접 접속해 주세요.</div>';
+        }
+
+        document.addEventListener('click', function (ev) {
+          var target = ev.target;
+          if (!(target instanceof HTMLElement)) return;
+          var copyBtn = target.closest('[data-copy-email]');
+          if (!copyBtn) return;
+          var email = copyBtn.getAttribute('data-copy-email');
+          if (!email) return;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(email).then(function () {
+              copyBtn.textContent = '이메일 주소가 복사되었습니다';
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

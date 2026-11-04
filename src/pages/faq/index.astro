@@ -1,0 +1,49 @@
+---
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import { FAQ_ITEMS } from '../../data/faq';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="자주 묻는 질문 (FAQ)"
+  description="학소 철학관의 홈페이지 무료 기본 사주 체험, 이메일 상담 방식, 시간 미상 및 음력·윤달 계산 기준에 관한 자주 묻는 질문과 답변입니다."
+  canonicalPath="/faq/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="badge">궁금한 점 안내</span>
+      <h1 style="margin-top: var(--space-3);">자주 묻는 질문 (FAQ)</h1>
+      <p>
+        홈페이지 무료 기본 사주 체험과 이메일 서면 상담 방식, 출생 시간 모름 및 양력·음력·윤달 입력에 관해 자주 묻는 질문을 모았습니다.
+      </p>
+
+      <div class="faq-page-list" style="margin-top: var(--space-6);">
+        {
+          FAQ_ITEMS.map((item) => (
+            <article class="card">
+              <span class="badge">{item.category}</span>
+              <h2 style="font-size: var(--text-lg); margin-top: var(--space-2); margin-bottom: var(--space-2);">
+                Q. {item.question}
+              </h2>
+              <p style="margin: 0;">{item.answer}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .faq-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+</style>

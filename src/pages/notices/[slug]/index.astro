@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { filterApprovedEntries } from '../../../lib/content/filter';
+
+export async function getStaticPaths() {
+  const allNotices = await getCollection('notices');
+  const approved = filterApprovedEntries(allNotices);
+  return approved.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<SiteLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  canonicalPath={`/notices/${entry.id}/`}
+>
+  <article class="section" style="border-bottom: none;">
+    <div class="container">
+      <span class="badge">{entry.data.category}</span>
+      <h1 style="margin-top: var(--space-3);">{entry.data.title}</h1>
+      <p style="font-size: var(--text-xs); color: var(--color-text-muted);">
+        발행일: {entry.data.publishedAt}
+      </p>
+      <div class="card" style="margin-top: var(--space-5);">
+        <Content />
+      </div>
+      <div class="btn-row" style="margin-top: var(--space-5);">
+        <a href="/notices/" class="btn btn-secondary">공지 목록으로 돌아가기</a>
+      </div>
+    </div>
+  </article>
+</SiteLayout>

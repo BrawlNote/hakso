@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { filterApprovedEntries } from '../../lib/content/filter';
+
+const allNotices = await getCollection('notices');
+const approvedNotices = filterApprovedEntries(allNotices);
+---
+
+<SiteLayout
+  title="공지사항"
+  description="학소 철학관의 운영 및 상담 일정 관련 공식 공지사항입니다."
+  canonicalPath="/notices/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="badge">운영 안내</span>
+      <h1 style="margin-top: var(--space-3);">공지사항</h1>
+      <p>학소 철학관의 이메일 상담 개시 및 운영 관련 공지사항을 안내합니다.</p>
+
+      {
+        approvedNotices.length > 0 ? (
+          <div class="grid-2" style="margin-top: var(--space-5);">
+            {approvedNotices.map((notice) => (
+              <article class="card">
+                <span class="badge">{notice.data.category}</span>
+                <h2 style="font-size: var(--text-xl); margin-top: var(--space-2);">
+                  <a href={`/notices/${notice.id}/`}>{notice.data.title}</a>
+                </h2>
+                <p>{notice.data.description}</p>
+                <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">
+                  발행일: {notice.data.publishedAt}
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="card" style="margin-top: var(--space-5);">
+            <h2 style="font-size: var(--text-lg); margin-top: 0;">현재 등록된 운영 공지가 없습니다</h2>
+            <p style="margin: 0;">
+              상담 전용 이메일 주소가 확정되거나 운영 일정에 변동이 있을 때 이곳에 공지됩니다.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>

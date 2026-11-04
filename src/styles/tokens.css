@@ -1,0 +1,69 @@
+:root {
+  /* 따뜻한 한지(종이) 바탕과 먹색 본문, 짙은 송엽색(녹색)·남색 강조 (명도 대비 4.5:1 이상) */
+  --color-bg-primary: #f8f5ee;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: #efeae0;
+  --color-bg-accent-soft: #e6efe9;
+  --color-bg-warning-soft: #fbf3e4;
+  --color-bg-error-soft: #fbeae8;
+
+  --color-text-primary: #1c1b18;
+  --color-text-secondary: #434039;
+  --color-text-muted: #5c574f;
+  --color-text-inverse: #fcfbf9;
+
+  --color-brand-primary: #1f4738;
+  --color-brand-primary-hover: #163529;
+  --color-brand-secondary: #243746;
+  --color-brand-gold-muted: #7a5c29;
+
+  --color-border-default: #d8d0c1;
+  --color-border-strong: #b6ab96;
+  --color-focus-ring: #1f4738;
+  --color-error: #9e2a2b;
+  --color-warning: #805315;
+
+  /* 오행 배지 색상 (명도 대비 4.5:1 이상 확보) */
+  --element-wood-bg: #e4f0e8;
+  --element-wood-text: #1b4d2e;
+  --element-fire-bg: #f9e6e4;
+  --element-fire-text: #7d231b;
+  --element-earth-bg: #f6eedc;
+  --element-earth-text: #634712;
+  --element-metal-bg: #eceff2;
+  --element-metal-text: #2e3b46;
+  --element-water-bg: #e3ecf5;
+  --element-water-text: #1c3d5a;
+
+  /* 시스템 한글 서체 스택 (외부 폰트 추적 없이 빠른 LCP 및 라이선스 안전 보장) */
+  --font-serif: 'AppleMyungjo', 'NanumMyeongjo', 'Batang', Georgia, serif;
+  --font-sans: 'Apple SD Gothic Neo', 'Pretendard', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  /* 타이포그래피 (모바일 본문 최소 16px = 1rem) */
+  --text-xs: 0.875rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: 1.625rem;
+  --text-3xl: 2rem;
+
+  /* 여백 및 레이아웃 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3.5rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-card: 0 2px 10px rgba(28, 27, 24, 0.05);
+  --container-max: 1080px;
+  --mobile-bar-height: 72px;
+}

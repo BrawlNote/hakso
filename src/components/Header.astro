@@ -1,0 +1,179 @@
+---
+import { BUSINESS_INFO, hasConsultationEmail } from '../data/business';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+const emailReady = hasConsultationEmail();
+
+const navItems = [
+  { href: '/about/', label: '학소 소개' },
+  { href: '/consultation/', label: '상담 안내' },
+  { href: '/saju/', label: '무료 사주' },
+  { href: '/articles/', label: '칼럼' },
+  { href: '/faq/', label: '자주 묻는 질문' },
+  { href: '/booking/', label: emailReady ? '이메일 상담 문의' : '이메일 상담' },
+];
+
+function isCurrent(href: string, path: string): boolean {
+  if (href === '/') return path === '/';
+  return path.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand-row">
+      <a href="/" class="brand-link" aria-label={`${BUSINESS_INFO.name} 홈으로 이동`}>
+        <span class="brand-mark" aria-hidden="true">鶴巢</span>
+        <span class="brand-text">
+          <strong class="brand-name">{BUSINESS_INFO.name}</strong>
+          <span class="brand-sub">만세력 무료 사주 · 이메일 상담</span>
+        </span>
+      </a>
+      <div class="header-cta-group">
+        <a href="/saju/" class="btn btn-secondary header-btn-sm">무료 사주 체험</a>
+        <a href="/booking/" class="btn btn-primary header-btn-sm">
+          {emailReady ? '이메일 상담 문의' : '이메일 상담 안내'}
+        </a>
+      </div>
+    </div>
+
+    <nav class="main-nav" aria-label="주요 메뉴">
+      <ul class="nav-list">
+        {
+          navItems.map((item) => {
+            const active = isCurrent(item.href, currentPath);
+            return (
+              <li>
+                <a href={item.href} class:list={['nav-link', { active }]} aria-current={active ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background-color: var(--color-bg-surface);
+    border-bottom: 1px solid var(--color-border-default);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--color-text-primary);
+    min-height: 44px;
+  }
+
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-brand-primary);
+    color: var(--color-text-inverse);
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  .brand-sub {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+  }
+
+  .header-cta-group {
+    display: none;
+    gap: var(--space-2);
+  }
+
+  .header-btn-sm {
+    min-height: 44px;
+    padding: 0.45rem 0.9rem;
+    font-size: var(--text-sm);
+  }
+
+  .main-nav {
+    width: 100%;
+    border-top: 1px solid var(--color-bg-subtle);
+    padding-top: var(--space-2);
+  }
+
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.35rem 0.65rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background-color: var(--color-bg-accent-soft);
+    color: var(--color-brand-primary);
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .header-cta-group {
+      display: flex;
+    }
+  }
+</style>

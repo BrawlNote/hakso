@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { filterApprovedEntries } from '../../lib/content/filter';
+
+const allArticles = await getCollection('articles');
+const approvedArticles = filterApprovedEntries(allArticles);
+---
+
+<SiteLayout
+  title="명리·상담 칼럼"
+  description="학소 철학관의 검수를 거쳐 발행된 사주 명리 기초 안내 및 상담 준비 칼럼 목록입니다."
+  canonicalPath="/articles/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="badge">학소 칼럼</span>
+      <h1 style="margin-top: var(--space-3);">명리·상담 안내 칼럼</h1>
+      <p>
+        학소 철학관은 운영자가 직접 사실 관계와 표현을 검수 완료한 글만 공개합니다. 검수 전 초안(draft)은 목록과 검색 색인에서 제외됩니다.
+      </p>
+
+      {
+        approvedArticles.length > 0 ? (
+          <div class="grid-2" style="margin-top: var(--space-6);">
+            {approvedArticles.map((article) => (
+              <article class="card">
+                <span class="badge">{article.data.category}</span>
+                <h2 style="font-size: var(--text-xl); margin-top: var(--space-2);">
+                  <a href={`/articles/${article.id}/`}>{article.data.title}</a>
+                </h2>
+                <p>{article.data.description}</p>
+                <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">
+                  발행일: {article.data.publishedAt} · 검수: {article.data.reviewer}
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="card" style="margin-top: var(--space-6);">
+            <h2 style="font-size: var(--text-lg); margin-top: 0;">현재 검수 완료되어 공개된 칼럼이 없습니다</h2>
+            <p style="margin-bottom: var(--space-3);">
+              "상담 전 준비할 출생 정보", "출생 시간을 모를 때", "양력·음력·윤달의 차이" 등 방문자 안내 칼럼 원고를 학소에서 검수하고 있으며, 검수가 완료되는 순서대로 이곳에 게시됩니다.
+            </p>
+            <div class="btn-row">
+              <a href="/faq/" class="btn btn-secondary">자주 묻는 질문 먼저 보기</a>
+              <a href="/saju/" class="btn btn-primary">무료 기본 사주 체험하기</a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta />
+    </div>
+  </section>
+</SiteLayout>

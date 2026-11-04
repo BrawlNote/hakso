@@ -1,0 +1,1040 @@
+---
+import EmailConsultationCta from '../../components/EmailConsultationCta.astro';
+import { BUSINESS_INFO } from '../../data/business';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="무료 기본 사주 체험"
+  description="학소 철학관의 만세력 기반 무료 기본 사주 체험입니다. 양력·음력·윤달과 출생 시간 모름을 구분하여 브라우저 메모리에서만 안전하게 계산합니다."
+  canonicalPath="/saju/"
+  noarchive={true}
+>
+  <section class="section">
+    <div class="container">
+      <div class="saju-header-badges">
+        <span class="badge">홈페이지 무료 제공</span>
+        <span class="badge">이름·연락처 무입력</span>
+        <span class="badge">브라우저 메모리 단독 처리</span>
+        <span class="badge badge-warn">계산·원고 기본안 (hakso-draft-v1)</span>
+      </div>
+      <h1 style="margin-top: var(--space-3);">무료 기본 사주 체험</h1>
+      <p>
+        생년월일과 출생 시각(또는 시간 모름)을 바탕으로 만세력 사주 명식과 기초 풀이를 확인해보실 수 있습니다. 입력하신 정보와 계산 결과는 <strong>방문자의 브라우저 메모리 안에서만 처리</strong>되며, 서버나 URL 주소에 저장되지 않습니다.
+      </p>
+
+      <div class="notice-box" role="note" aria-label="개인정보 및 새로고침 초기화 안내">
+        <p style="margin: 0; font-size: var(--text-sm);">
+          <strong>안내:</strong> 본 체험은 개인정보 보호를 위해 결과를 저장하거나 공유 링크를 만들지 않습니다. <strong>페이지를 새로고침하거나 닫으면 입력하신 생년월일과 결과는 즉시 사라집니다.</strong> 또한 사주 계산 결과와 풀이 원고의 무단 복제·자동화 수집(스크래핑)·외부 사이트 임베딩은 금지되어 있습니다.
+        </p>
+      </div>
+
+      <div id="saju-nojs-fallback" class="notice-box error" role="alert">
+        <p style="margin: 0 0 0.5rem 0; font-weight: 700;">
+          자바스크립트(JavaScript) 활성화가 필요합니다
+        </p>
+        <p style="margin: 0;">
+          학소 철학관의 무료 사주 체험은 개인정보를 서버로 전송하지 않고 브라우저 안에서 직접 만세력을 계산하기 위해 자바스크립트를 사용합니다. 브라우저 설정에서 자바스크립트를 켜시거나, 자바스크립트 없이도 열람 가능한 <a href="/about/">학소 소개</a> 및 <a href="/booking/">이메일 상담 안내</a> 페이지를 이용해 주세요.
+        </p>
+      </div>
+
+      <!-- 인터랙티브 사주 체험 앱 컨테이너 -->
+      <div id="saju-app" class="saju-app-wrap" style="margin-top: var(--space-6);">
+        <!-- 오류 알림 영역 -->
+        <div
+          id="saju-error-banner"
+          class="notice-box error"
+          role="alert"
+          aria-live="assertive"
+          hidden
+          tabindex="-1"
+        >
+          <p id="saju-error-title" style="margin: 0 0 0.25rem 0; font-weight: 700; color: var(--color-error);"></p>
+          <p id="saju-error-hint" style="margin: 0; font-size: var(--text-sm);"></p>
+        </div>
+
+        <!-- 단계 1: 출생 정보 입력 폼 -->
+        <form id="saju-form" class="card saju-form-card" novalidate autocomplete="off">
+          <h2 style="margin-top: 0;">1단계. 출생 정보 입력</h2>
+          <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: 0;">
+            성명·전화번호·이메일은 입력받지 않습니다. 출생 시각을 정확히 모르시면 "출생 시간 모름"을 선택해 주세요.
+          </p>
+
+          <!-- 자동화 스크래퍼 방지용 허니팟 필드 -->
+          <div class="hp-trap-field" aria-hidden="true">
+            <label for="saju-hp-website">이 필드는 비워 두세요</label>
+            <input type="text" id="saju-hp-website" name="website_url_hp" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">양력 / 음력 구분 (필수)</legend>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="calendar" value="solar" id="cal-solar" checked />
+                <span>양력 (기본)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="calendar" value="lunar" id="cal-lunar" />
+                <span>음력</span>
+              </label>
+              <label class="checkbox-label" id="leap-month-wrap">
+                <input type="checkbox" name="isLeapMonth" id="input-leap-month" disabled />
+                <span>음력 윤달(閏月) 생일입니다</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="form-grid-3">
+            <div class="form-field">
+              <label for="input-year" class="form-label">출생 연도 (1900~2026)</label>
+              <input
+                type="number"
+                id="input-year"
+                name="year"
+                min="1900"
+                max="2026"
+                inputmode="numeric"
+                placeholder="예: 1992"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-field">
+              <label for="input-month" class="form-label">출생 월 (1~12)</label>
+              <input
+                type="number"
+                id="input-month"
+                name="month"
+                min="1"
+                max="12"
+                inputmode="numeric"
+                placeholder="예: 10"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-field">
+              <label for="input-day" class="form-label">출생 일 (1~31)</label>
+              <input
+                type="number"
+                id="input-day"
+                name="day"
+                min="1"
+                max="31"
+                inputmode="numeric"
+                placeholder="예: 24"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">출생 시각 인지 여부 (필수)</legend>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="timeStatus" value="known" id="time-known" checked />
+                <span>출생 시각을 알고 있음</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="timeStatus" value="unknown" id="time-unknown" />
+                <span>출생 시간 모름 (시주 제외·삼주 분석)</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="form-grid-2" id="time-inputs-row">
+            <div class="form-field">
+              <label for="input-hour" class="form-label">출생 시 (24시간제, 0~23시)</label>
+              <input
+                type="number"
+                id="input-hour"
+                name="hour"
+                min="0"
+                max="23"
+                inputmode="numeric"
+                placeholder="예: 14 (오후 2시)"
+                class="form-input"
+              />
+            </div>
+            <div class="form-field">
+              <label for="input-minute" class="form-label">출생 분 (0~59분)</label>
+              <input
+                type="number"
+                id="input-minute"
+                name="minute"
+                min="0"
+                max="59"
+                inputmode="numeric"
+                placeholder="예: 30"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="input-region" class="form-label">출생 지역 (시간대 기준 확인)</label>
+              <select id="input-region" name="birthRegion" class="form-select">
+                <option value="KR" selected>대한민국 국내 출생 (Asia/Seoul 기준)</option>
+                <option value="OTHER">해외 출생 (자동 계산 미지원 · 개별 문의)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="input-topic" class="form-label">중점적으로 살필 주제 (선택)</label>
+              <select id="input-topic" name="topic" class="form-select">
+                <option value="general" selected>종합 명식과 삶의 기조</option>
+                <option value="career">진로·직업·일하는 방식</option>
+                <option value="relationship">대인관계·소통과 거리감</option>
+                <option value="decision">전환기 선택과 우선순위 정리</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top: var(--space-5);">
+            <button type="submit" class="btn btn-primary" id="btn-review-input">
+              입력 내용 및 계산 기준 확인하기
+            </button>
+            <button type="reset" class="btn btn-muted" id="btn-reset-form">
+              입력 초기화
+            </button>
+          </div>
+        </form>
+
+        <!-- 단계 2: 입력 확인 단계 (모바일 오입력 및 음력/윤달/시간모름 확인) -->
+        <section
+          id="saju-confirm-step"
+          class="card saju-confirm-card"
+          aria-labelledby="confirm-step-heading"
+          hidden
+          tabindex="-1"
+        >
+          <span class="badge">입력 정보 확인</span>
+          <h2 id="confirm-step-heading" style="margin-top: var(--space-2);">
+            2단계. 입력하신 출생 정보와 적용 기준을 확인해 주세요
+          </h2>
+          <p style="font-size: var(--text-sm);">
+            양력·음력(윤달) 구분이나 출생 시간 모름 여부가 맞는지 확인하신 뒤 아래 버튼을 누르면 명식과 기본 풀이를 계산합니다.
+          </p>
+          <dl id="confirm-summary-list" class="confirm-dl"></dl>
+          <div class="btn-row" style="margin-top: var(--space-5);">
+            <button type="button" class="btn btn-primary" id="btn-confirm-calculate">
+              이 기준으로 명식·기본 풀이 보기
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-back-to-edit">
+              입력 내용 수정하기
+            </button>
+          </div>
+        </section>
+
+        <!-- 단계 3: 사주 명식 및 기본 풀이 결과 (무단 복제·인쇄·스크래핑 보호 구역) -->
+        <section
+          id="saju-result-step"
+          class="saju-result-wrap protected-saju-zone"
+          data-protected-content="true"
+          aria-labelledby="result-step-heading"
+           aria-live="polite"
+          hidden
+          tabindex="-1"
+        >
+          <div class="card">
+            <div class="result-top-bar">
+              <div>
+                <span class="badge">만세력 계산 완료</span>
+                <span class="badge badge-warn">기본안 (hakso-draft-v1 · 운영자 검수 대기)</span>
+                <h2 id="result-step-heading" style="margin-top: var(--space-2); margin-bottom: var(--space-1);">
+                  3단계. 사주 명식 및 무료 기본 풀이
+                </h2>
+              </div>
+              <div class="btn-row">
+                <button type="button" class="btn btn-secondary" id="btn-result-edit">
+                  입력 수정하기
+                </button>
+                <button type="button" class="btn btn-muted" id="btn-result-restart">
+                  새로 입력하기
+                </button>
+              </div>
+            </div>
+
+            <div id="copy-guard-toast" class="notice-box warning" hidden role="status">
+              <p style="margin: 0; font-size: var(--text-sm);">
+                보호 안내: 학소 철학관의 사주 명식 표와 기본 풀이 원고는 저작권 보호를 위해 무단 복사·우클릭·외부 퍼가기가 제한됩니다.
+              </p>
+            </div>
+
+            <!-- 1) 입력 요약 및 변환 결과 -->
+            <div id="result-input-summary" class="result-summary-box"></div>
+
+            <!-- 2) 연·월·일·시주 명식 표 -->
+            <h3 style="margin-top: var(--space-6);">사주 명식표 (한자·한글 음독 및 오행)</h3>
+            <div class="pillars-grid" id="result-pillars-grid" role="region" aria-label="사주 네 기둥 표"></div>
+
+            <!-- 3) 표면 오행 분포 -->
+            <h3 style="margin-top: var(--space-6);">천간·지지 표면 오행 분포</h3>
+            <div id="result-elements-box" class="elements-box"></div>
+
+            <!-- 4) 경계 시각 후보 간지 (해당 시에만 표시) -->
+            <div id="result-boundary-wrap" hidden style="margin-top: var(--space-6);">
+              <h3>경계 시각·절입 대안 명식 안내</h3>
+              <div id="result-boundary-list" class="stack-list"></div>
+            </div>
+
+            <!-- 5) 기본 풀이 (3~5개 섹션) -->
+            <h3 style="margin-top: var(--space-6);">기초 명식 특징 및 기본 풀이</h3>
+            <div id="result-readings-list" class="stack-list"></div>
+
+            <!-- 6) 계산 기준 및 한계 안내 -->
+            <h3 style="margin-top: var(--space-6);">적용된 계산 기준 및 제한 사항</h3>
+            <div id="result-limitations-list" class="stack-list"></div>
+          </div>
+        </section>
+
+        <div class="print-only-protection-notice">
+          © {BUSINESS_INFO.name} — 사주 명식 및 기본 풀이 원고의 무단 인쇄·PDF 추출·복제·재배포를 금지합니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="container">
+      <EmailConsultationCta
+        heading="기본 풀이 너머의 구체적인 질문이 있으신가요?"
+        description="무료 기본 체험은 입력된 생년월일시의 기초 구조를 확인하는 과정입니다. 절입·자시 경계의 정밀 대조나 개인의 구체적인 진로·관계 선택지를 다루는 서면 상담은 이메일 상담 안내를 확인해 주세요."
+      />
+    </div>
+  </section>
+</SiteLayout>
+
+<script>
+  import { calculateSaju, type SajuBirthInput, type SajuChart } from '../../lib/saju';
+
+  (function initSajuExperience() {
+    const nojsFallback = document.getElementById('saju-nojs-fallback');
+    if (nojsFallback) {
+      nojsFallback.hidden = true;
+    }
+
+    // 1. URL 쿼리 파라미터로 개인 생년월일이 전달되거나 공유 링크로 악용되는 것을 즉시 차단·제거
+    if (window.location.search && window.location.search.length > 0) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    const form = document.getElementById('saju-form') as HTMLFormElement | null;
+    const calSolar = document.getElementById('cal-solar') as HTMLInputElement | null;
+    const calLunar = document.getElementById('cal-lunar') as HTMLInputElement | null;
+    const leapCheckbox = document.getElementById('input-leap-month') as HTMLInputElement | null;
+    const timeKnown = document.getElementById('time-known') as HTMLInputElement | null;
+    const timeUnknown = document.getElementById('time-unknown') as HTMLInputElement | null;
+    const inputYear = document.getElementById('input-year') as HTMLInputElement | null;
+    const inputMonth = document.getElementById('input-month') as HTMLInputElement | null;
+    const inputDay = document.getElementById('input-day') as HTMLInputElement | null;
+    const inputHour = document.getElementById('input-hour') as HTMLInputElement | null;
+    const inputMinute = document.getElementById('input-minute') as HTMLInputElement | null;
+    const inputRegion = document.getElementById('input-region') as HTMLSelectElement | null;
+    const inputTopic = document.getElementById('input-topic') as HTMLSelectElement | null;
+    const hpInput = document.getElementById('saju-hp-website') as HTMLInputElement | null;
+
+    const errorBanner = document.getElementById('saju-error-banner') as HTMLElement | null;
+    const errorTitle = document.getElementById('saju-error-title') as HTMLElement | null;
+    const errorHint = document.getElementById('saju-error-hint') as HTMLElement | null;
+
+    const confirmStep = document.getElementById('saju-confirm-step') as HTMLElement | null;
+    const confirmList = document.getElementById('confirm-summary-list') as HTMLElement | null;
+    const btnConfirmCalculate = document.getElementById('btn-confirm-calculate') as HTMLButtonElement | null;
+    const btnBackToEdit = document.getElementById('btn-back-to-edit') as HTMLButtonElement | null;
+
+    const resultStep = document.getElementById('saju-result-step') as HTMLElement | null;
+    const btnResultEdit = document.getElementById('btn-result-edit') as HTMLButtonElement | null;
+    const btnResultRestart = document.getElementById('btn-result-restart') as HTMLButtonElement | null;
+    const copyGuardToast = document.getElementById('copy-guard-toast') as HTMLElement | null;
+
+    const resultSummaryBox = document.getElementById('result-input-summary') as HTMLElement | null;
+    const resultPillarsGrid = document.getElementById('result-pillars-grid') as HTMLElement | null;
+    const resultElementsBox = document.getElementById('result-elements-box') as HTMLElement | null;
+    const resultBoundaryWrap = document.getElementById('result-boundary-wrap') as HTMLElement | null;
+    const resultBoundaryList = document.getElementById('result-boundary-list') as HTMLElement | null;
+    const resultReadingsList = document.getElementById('result-readings-list') as HTMLElement | null;
+    const resultLimitationsList = document.getElementById('result-limitations-list') as HTMLElement | null;
+
+    if (!form || !calSolar || !calLunar || !leapCheckbox || !timeKnown || !timeUnknown) {
+      return;
+    }
+
+    // 클로저 내부에만 유지되는 메모리 상태 (전역 window 노출 금지)
+    let pendingChart: SajuChart | null = null;
+    let calculationCountInWindow = 0;
+    let windowStartMs = Date.now();
+
+    function clearError() {
+      if (!errorBanner || !errorTitle || !errorHint) return;
+      errorBanner.hidden = true;
+      errorTitle.textContent = '';
+      errorHint.textContent = '';
+    }
+
+    function showError(message: string, hint: string, focusField?: string) {
+      if (!errorBanner || !errorTitle || !errorHint) return;
+      errorTitle.textContent = message;
+      errorHint.textContent = hint;
+      errorBanner.hidden = false;
+
+      if (focusField === 'date' && inputYear) {
+        inputYear.focus();
+      } else if (focusField === 'isLeapMonth' && leapCheckbox && !leapCheckbox.disabled) {
+        leapCheckbox.focus();
+      } else if (focusField === 'time' && inputHour && !inputHour.disabled) {
+        inputHour.focus();
+      } else if (focusField === 'birthRegion' && inputRegion) {
+        inputRegion.focus();
+      } else {
+        errorBanner.focus();
+      }
+    }
+
+    // 양력/음력 토글 시 윤달 체크박스 상태 동기화 (양력 전환 시 윤달 상태 즉시 초기화)
+    function syncCalendarState() {
+      if (!calLunar || !leapCheckbox) return;
+      if (calLunar.checked) {
+        leapCheckbox.disabled = false;
+      } else {
+        leapCheckbox.checked = false;
+        leapCheckbox.disabled = true;
+      }
+    }
+
+    // 시간 알음/모름 토글 시 시·분 입력란 동기화 (시간 모름 선택 시 이전 시·분 값 즉시 제거)
+    function syncTimeState() {
+      if (!timeUnknown || !inputHour || !inputMinute) return;
+      if (timeUnknown.checked) {
+        inputHour.value = '';
+        inputMinute.value = '';
+        inputHour.disabled = true;
+        inputMinute.disabled = true;
+      } else {
+        inputHour.disabled = false;
+        inputMinute.disabled = false;
+      }
+    }
+
+    calSolar.addEventListener('change', syncCalendarState);
+    calLunar.addEventListener('change', syncCalendarState);
+    timeKnown.addEventListener('change', syncTimeState);
+    timeUnknown.addEventListener('change', syncTimeState);
+
+    function parseFormInput(): SajuBirthInput {
+      const calendar = calLunar?.checked ? 'lunar' : 'solar';
+      const isLeapMonth = calendar === 'lunar' ? Boolean(leapCheckbox?.checked) : false;
+      const year = Number(inputYear?.value);
+      const month = Number(inputMonth?.value);
+      const day = Number(inputDay?.value);
+      const timeStatus = timeUnknown?.checked ? 'unknown' : 'known';
+
+      let hour: number | null = null;
+      let minute: number | null = null;
+      if (timeStatus === 'known') {
+        const rawH = inputHour?.value.trim() ?? '';
+        const rawM = inputMinute?.value.trim() ?? '';
+        hour = rawH === '' ? NaN : Number(rawH);
+        minute = rawM === '' ? NaN : Number(rawM);
+      }
+
+      const birthRegion = (inputRegion?.value === 'OTHER' ? 'OTHER' : 'KR') as 'KR' | 'OTHER';
+      const topic = (inputTopic?.value || 'general') as SajuBirthInput['topic'];
+
+      return {
+        calendar,
+        year,
+        month,
+        day,
+        isLeapMonth,
+        timeStatus,
+        hour,
+        minute,
+        birthRegion,
+        topic,
+      };
+    }
+
+    const TOPIC_LABELS: Record<string, string> = {
+      general: '종합 명식과 삶의 기조',
+      career: '진로·직업·일하는 방식',
+      relationship: '대인관계·소통과 거리감',
+      decision: '전환기 선택과 우선순위 정리',
+    };
+
+    function renderConfirmationStep(chart: SajuChart) {
+      if (!confirmList || !confirmStep || !form) return;
+      confirmList.textContent = '';
+
+      const rows: Array<[string, string]> = [
+        ['입력 달력 기준', chart.normalizedInput.originalDateLabel],
+        [
+          '양력·음력 대조',
+          `양력 ${chart.normalizedInput.solar.year}년 ${chart.normalizedInput.solar.month}월 ${chart.normalizedInput.solar.day}일 (음력 ${chart.normalizedInput.lunar.year}년 ${chart.normalizedInput.lunar.isLeapMonth ? '윤' : '평'}${chart.normalizedInput.lunar.month}월 ${chart.normalizedInput.lunar.day}일)`,
+        ],
+        ['출생 시각 상태', chart.normalizedInput.timeLabel],
+        ['출생 지역 기준', '대한민국 국내 출생 (Asia/Seoul 역사적 표준시·서머타임 대조)'],
+        ['중점 확인 주제', TOPIC_LABELS[chart.normalizedInput.topic] || '종합 명식'],
+        [
+          '적용 계산 정책',
+          `${chart.calculationPolicyVersion} (입춘·12절 절입 시각 기준, 자정 일주 경계, 시간 미상 시주 미생성)`,
+        ],
+      ];
+
+      for (const [dtText, ddText] of rows) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'confirm-row';
+        const dt = document.createElement('dt');
+        dt.textContent = dtText;
+        const dd = document.createElement('dd');
+        dd.textContent = ddText;
+        rowDiv.appendChild(dt);
+        rowDiv.appendChild(dd);
+        confirmList.appendChild(rowDiv);
+      }
+
+      form.hidden = true;
+      if (resultStep) resultStep.hidden = true;
+      confirmStep.hidden = false;
+      confirmStep.focus();
+    }
+
+    function createPillarCard(label: string, pillar: SajuChart['pillars']['hour'], isHour: boolean): HTMLElement {
+      const card = document.createElement('div');
+      card.className = 'pillar-box';
+
+      const heading = document.createElement('p');
+      heading.className = 'pillar-label';
+      heading.textContent = label;
+      card.appendChild(heading);
+
+      if (!pillar) {
+        const emptyBadge = document.createElement('p');
+        emptyBadge.className = 'pillar-empty-title';
+        emptyBadge.textContent = '시주 미상';
+        const emptySub = document.createElement('p');
+        emptySub.className = 'pillar-empty-sub';
+        emptySub.textContent = isHour ? '출생 시간 모름 (임의 시주 미생성)' : '-';
+        card.appendChild(emptyBadge);
+        card.appendChild(emptySub);
+        return card;
+      }
+
+      const hanjaP = document.createElement('p');
+      hanjaP.className = 'pillar-hanja';
+      hanjaP.textContent = pillar.hanja;
+
+      const korP = document.createElement('p');
+      korP.className = 'pillar-korean';
+      korP.textContent = `${pillar.korean} (${pillar.stemReading} · ${pillar.branchReading})`;
+
+      const elemP = document.createElement('p');
+      elemP.className = 'pillar-elements';
+      elemP.textContent = `천간: ${pillar.stemYinYang}${pillar.stemElement} / 지지: ${pillar.branchYinYang}${pillar.branchElement}`;
+
+      card.appendChild(hanjaP);
+      card.appendChild(korP);
+      card.appendChild(elemP);
+      return card;
+    }
+
+    function renderResultStep(chart: SajuChart) {
+      if (
+        !resultStep ||
+        !resultSummaryBox ||
+        !resultPillarsGrid ||
+        !resultElementsBox ||
+        !resultBoundaryWrap ||
+        !resultBoundaryList ||
+        !resultReadingsList ||
+        !resultLimitationsList
+      ) {
+        return;
+      }
+
+      // 1) 입력 요약
+      resultSummaryBox.textContent = '';
+      const sumP1 = document.createElement('p');
+      sumP1.style.margin = '0 0 0.35rem 0';
+      sumP1.innerHTML = '';
+      const strongLabel = document.createElement('strong');
+      strongLabel.textContent = '입력 및 변환 기준: ';
+      sumP1.appendChild(strongLabel);
+      sumP1.appendChild(
+        document.createTextNode(
+          `${chart.normalizedInput.originalDateLabel} → 양력 ${chart.normalizedInput.solar.year}년 ${chart.normalizedInput.solar.month}월 ${chart.normalizedInput.solar.day}일 / 음력 ${chart.normalizedInput.lunar.year}년 ${chart.normalizedInput.lunar.isLeapMonth ? '윤' : '평'}${chart.normalizedInput.lunar.month}월 ${chart.normalizedInput.lunar.day}일 · ${chart.normalizedInput.timeLabel}`,
+        ),
+      );
+      resultSummaryBox.appendChild(sumP1);
+
+      if (chart.normalizedInput.historicalTimeNote) {
+        const histP = document.createElement('p');
+        histP.style.margin = '0';
+        histP.style.fontSize = 'var(--text-xs)';
+        histP.style.color = 'var(--color-warning)';
+        histP.textContent = `역사적 표준시·서머타임 반영: ${chart.normalizedInput.historicalTimeNote}`;
+        resultSummaryBox.appendChild(histP);
+      }
+
+      // 2) 사주 명식표 (전통 오른쪽->왼쪽 또는 왼쪽->오른쪽 안내와 함께 시주·일주·월주·연주 표시)
+      resultPillarsGrid.textContent = '';
+      resultPillarsGrid.appendChild(createPillarCard('시주 (時柱)', chart.pillars.hour, true));
+      resultPillarsGrid.appendChild(createPillarCard('일주 (日柱 · 본원)', chart.pillars.day, false));
+      resultPillarsGrid.appendChild(createPillarCard('월주 (月柱 · 계절)', chart.pillars.month, false));
+      resultPillarsGrid.appendChild(createPillarCard('연주 (年柱)', chart.pillars.year, false));
+
+      // 3) 오행 분포
+      resultElementsBox.textContent = '';
+      const elemRow = document.createElement('div');
+      elemRow.className = 'elements-chips';
+      const elemMeta: Array<[keyof typeof chart.fiveElements.counts, string]> = [
+        ['목', '목(木)'],
+        ['화', '화(火)'],
+        ['토', '토(土)'],
+        ['금', '금(金)'],
+        ['수', '수(水)'],
+      ];
+      for (const [key, label] of elemMeta) {
+        const chip = document.createElement('span');
+        chip.className = 'element-chip';
+        chip.textContent = `${label}: ${chart.fiveElements.counts[key]}개`;
+        elemRow.appendChild(chip);
+      }
+      resultElementsBox.appendChild(elemRow);
+
+      const elemNote = document.createElement('p');
+      elemNote.style.margin = '0.5rem 0 0 0';
+      elemNote.style.fontSize = 'var(--text-xs)';
+      elemNote.style.color = 'var(--color-text-muted)';
+      elemNote.textContent = chart.fiveElements.note;
+      resultElementsBox.appendChild(elemNote);
+
+      // 4) 경계 시각 후보 간지
+      resultBoundaryList.textContent = '';
+      if (chart.boundaryAlternatives.length > 0) {
+        resultBoundaryWrap.hidden = false;
+        for (const alt of chart.boundaryAlternatives) {
+          const box = document.createElement('div');
+          box.className = 'notice-box warning';
+          const titleP = document.createElement('p');
+          titleP.style.margin = '0 0 0.25rem 0';
+          titleP.style.fontWeight = '700';
+          titleP.textContent = alt.title;
+          const descP = document.createElement('p');
+          descP.style.margin = '0 0 0.35rem 0';
+          descP.style.fontSize = 'var(--text-sm)';
+          descP.textContent = alt.description;
+          const candP = document.createElement('p');
+          candP.style.margin = '0';
+          candP.style.fontSize = 'var(--text-sm)';
+          candP.style.fontWeight = '600';
+          candP.textContent = alt.candidatePillarsNote;
+          box.appendChild(titleP);
+          box.appendChild(descP);
+          box.appendChild(candP);
+          resultBoundaryList.appendChild(box);
+        }
+      } else {
+        resultBoundaryWrap.hidden = true;
+      }
+
+      // 5) 기본 풀이
+      resultReadingsList.textContent = '';
+      for (const section of chart.readings) {
+        const article = document.createElement('article');
+        article.className = 'reading-card';
+        const badge = document.createElement('span');
+        badge.className = 'badge badge-warn';
+        badge.textContent = '학소 검수 대기 기본안 원고';
+        const h4 = document.createElement('h4');
+        h4.style.margin = '0.5rem 0';
+        h4.textContent = section.title;
+        const bodyP = document.createElement('p');
+        bodyP.style.margin = '0';
+        bodyP.textContent = section.body;
+        article.appendChild(badge);
+        article.appendChild(h4);
+        article.appendChild(bodyP);
+        resultReadingsList.appendChild(article);
+      }
+
+      // 6) 제한 사항
+      resultLimitationsList.textContent = '';
+      for (const lim of chart.limitations) {
+        const item = document.createElement('div');
+        item.className = 'limitation-item';
+        const strong = document.createElement('strong');
+        strong.textContent = `${lim.title}: `;
+        const span = document.createElement('span');
+        span.textContent = lim.description;
+        item.appendChild(strong);
+        item.appendChild(span);
+        resultLimitationsList.appendChild(item);
+      }
+
+      if (form) form.hidden = true;
+      if (confirmStep) confirmStep.hidden = true;
+      resultStep.hidden = false;
+      resultStep.focus();
+    }
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      clearError();
+
+      // 허니팟 검사 (자동화 스크래핑 봇 차단)
+      if (hpInput && hpInput.value.trim().length > 0) {
+        showError('비정상적인 자동화 요청이 감지되어 계산이 중단되었습니다.', '일반 브라우저 환경에서 직접 입력해 주세요.');
+        return;
+      }
+
+      // 단기 대량 호출(스크래핑 루프) 방지 레이트 가드 (분당 25회 상한)
+      const now = Date.now();
+      if (now - windowStartMs > 60_000) {
+        windowStartMs = now;
+        calculationCountInWindow = 0;
+      }
+      calculationCountInWindow += 1;
+      if (calculationCountInWindow > 25) {
+        showError(
+          '짧은 시간 동안 과도한 연속 계산 요청이 감지되었습니다.',
+          '콘텐츠 무단 수집 방지를 위해 잠시 후 다시 이용해 주세요.',
+        );
+        return;
+      }
+
+      const parsed = parseFormInput();
+      const res = calculateSaju(parsed);
+      if (!res.ok) {
+        showError(res.message, res.recoveryHint, res.field);
+        return;
+      }
+
+      pendingChart = res.chart;
+      renderConfirmationStep(res.chart);
+    });
+
+    form.addEventListener('reset', function () {
+      clearError();
+      pendingChart = null;
+      setTimeout(function () {
+        syncCalendarState();
+        syncTimeState();
+      }, 0);
+    });
+
+    btnConfirmCalculate?.addEventListener('click', function () {
+      if (!pendingChart) return;
+      renderResultStep(pendingChart);
+    });
+
+    btnBackToEdit?.addEventListener('click', function () {
+      if (confirmStep) confirmStep.hidden = true;
+      if (resultStep) resultStep.hidden = true;
+      if (form) {
+        form.hidden = false;
+        inputYear?.focus();
+      }
+    });
+
+    btnResultEdit?.addEventListener('click', function () {
+      if (resultStep) resultStep.hidden = true;
+      if (confirmStep) confirmStep.hidden = true;
+      if (form) {
+        form.hidden = false;
+        inputYear?.focus();
+      }
+    });
+
+    btnResultRestart?.addEventListener('click', function () {
+      pendingChart = null;
+      if (resultStep) resultStep.hidden = true;
+      if (confirmStep) confirmStep.hidden = true;
+      if (form) {
+        form.reset();
+        form.hidden = false;
+        syncCalendarState();
+        syncTimeState();
+        inputYear?.focus();
+      }
+    });
+
+    // 결과 영역 무단 복사·잘라내기·드래그·우클릭 퍼가기 방지
+    function showProtectionNotice() {
+      if (!copyGuardToast) return;
+      copyGuardToast.hidden = false;
+    }
+
+    resultStep?.addEventListener('copy', function (ev) {
+      ev.preventDefault();
+      if (ev.clipboardData) {
+        ev.clipboardData.setData(
+          'text/plain',
+          '© 학소 철학관 - 사주 명식 및 기본 풀이 원고의 무단 복제·전재·스크래핑을 금지합니다.',
+        );
+      }
+      showProtectionNotice();
+    });
+
+    resultStep?.addEventListener('cut', function (ev) {
+      ev.preventDefault();
+      showProtectionNotice();
+    });
+
+    resultStep?.addEventListener('contextmenu', function (ev) {
+      ev.preventDefault();
+      showProtectionNotice();
+    });
+
+    resultStep?.addEventListener('dragstart', function (ev) {
+      ev.preventDefault();
+    });
+  })();
+</script>
+
+<style>
+  .saju-header-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .saju-form-card,
+  .saju-confirm-card {
+    margin-bottom: var(--space-5);
+  }
+
+  .form-fieldset {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3) var(--space-4);
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .form-legend {
+    font-weight: 700;
+    font-size: var(--text-sm);
+    padding: 0 var(--space-2);
+    color: var(--color-text-primary);
+  }
+
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    align-items: center;
+  }
+
+  .radio-label,
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    cursor: pointer;
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+  }
+
+  .radio-label input,
+  .checkbox-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-brand-primary);
+  }
+
+  .form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .form-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .form-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .form-label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+  }
+
+  .form-input,
+  .form-select {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.55rem 0.75rem;
+    font-size: var(--text-base);
+    font-family: inherit;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-surface);
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  .form-input:disabled {
+    background-color: var(--color-bg-subtle);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+
+  .confirm-dl {
+    margin: var(--space-4) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  :global(.confirm-row) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  :global(.confirm-row dt) {
+    font-weight: 700;
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+  }
+
+  :global(.confirm-row dd) {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .result-top-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .result-summary-box {
+    background-color: var(--color-bg-subtle);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 768px) {
+    .pillars-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  :global(.pillar-box) {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+    text-align: center;
+  }
+
+  :global(.pillar-label) {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  :global(.pillar-hanja) {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: 0.08em;
+  }
+
+  :global(.pillar-korean) {
+    margin: var(--space-1) 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-brand-primary);
+  }
+
+  :global(.pillar-elements) {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+
+  :global(.pillar-empty-title) {
+    margin: var(--space-2) 0 var(--space-1) 0;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  :global(.pillar-empty-sub) {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  :global(.elements-chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  :global(.element-chip) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    background-color: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .stack-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  :global(.reading-card) {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4);
+  }
+
+  :global(.limitation-item) {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-sm);
+  }
+</style>

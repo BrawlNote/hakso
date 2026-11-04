@@ -1,0 +1,196 @@
+---
+import { BUSINESS_INFO, getVisibleBusinessFacts, hasConsultationEmail } from '../data/business';
+
+const visibleFacts = getVisibleBusinessFacts(BUSINESS_INFO);
+const emailReady = hasConsultationEmail(BUSINESS_INFO);
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-title serif-title">{BUSINESS_INFO.name}</p>
+        <p class="footer-slogan">{BUSINESS_INFO.slogan}</p>
+        <p class="footer-status-badge">
+          <span class:list={['badge', { 'badge-warn': !emailReady }]}>
+            {emailReady ? '이메일 상담 운영 중' : '이메일 상담 준비 중 (상담용 이메일 추후 공지)'}
+          </span>
+        </p>
+      </div>
+
+      <nav class="footer-nav" aria-label="하단 안내 메뉴">
+        <div class="footer-nav-col">
+          <p class="footer-nav-heading">안내 및 서비스</p>
+          <ul>
+            <li><a href="/about/">학소 소개</a></li>
+            <li><a href="/consultation/">상담 안내</a></li>
+            <li><a href="/booking/">이메일 상담</a></li>
+            <li><a href="/saju/">무료 사주 체험</a></li>
+            <li><a href="/visit/">소재지 안내</a></li>
+          </ul>
+        </div>
+        <div class="footer-nav-col">
+          <p class="footer-nav-heading">소식 및 정책</p>
+          <ul>
+            <li><a href="/faq/">자주 묻는 질문</a></li>
+            <li><a href="/articles/">칼럼</a></li>
+            <li><a href="/notices/">공지사항</a></li>
+            <li><a href="/privacy/">개인정보 처리 안내</a></li>
+            <li><a href="/terms/">이용 안내 및 저작권 보호</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <dl class="footer-facts" aria-label="학소 철학관 기본 정보">
+      {
+        visibleFacts.map((fact) => (
+          <div class="fact-item">
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <p class="footer-disclaimer">
+      {BUSINESS_INFO.address.note} 사주 명리 풀이는 삶의 방향을 점검하기 위한 전통적 해석 참고 자료이며, 의학적·법률적·재무적 판단을 대신하지 않습니다. 본 사이트의 사주 계산 로직 및 풀이 원고의 무단 복제·크롤링·상업적 전재를 금지합니다.
+    </p>
+
+    <p class="footer-copy">© {new Date().getUTCFullYear()} {BUSINESS_INFO.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    background-color: var(--color-bg-subtle);
+    border-top: 1px solid var(--color-border-default);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    justify-content: space-between;
+  }
+
+  @media (min-width: 768px) {
+    .footer-top {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .footer-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-text-primary);
+  }
+
+  .footer-slogan {
+    margin: 0 0 var(--space-3) 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .footer-status-badge {
+    margin: 0;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  .footer-nav-heading {
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .footer-nav-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .footer-nav-col a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  .footer-nav-col a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+  }
+
+  .footer-facts {
+    margin: 0;
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-border-default);
+    border-bottom: 1px solid var(--color-border-default);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2) var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .footer-facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .fact-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .fact-item dt {
+    font-weight: 700;
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+  }
+
+  .fact-item dt::after {
+    content: ':';
+  }
+
+  .fact-item dd {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .footer-disclaimer {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .footer-copy {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+</style>
