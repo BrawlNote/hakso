@@ -86,8 +86,12 @@ npm run test:e2e
 
 ---
 
-## 6. 미리보기 및 운영 배포 / 롤백
+## 6. 미리보기 및 운영 배포 / 롤백 (검색엔진 비노출 해제 포함)
 
+- **정식 오픈 전 필수 확인 문서**: 저장소 루트의 [`TODO.md`](../TODO.md)를 반드시 먼저 확인한다.
+- **검색엔진 비노출(`noindex`) 해제**:
+  - 외부 테스트용 GitHub Pages 워크플로(`.github/workflows/deploy-pages.yml`)에는 임시 테스트 주소의 검색 수집을 막기 위해 `PREVIEW_NOINDEX: "true"`가 설정되어 있다.
+  - 정식 오픈 시 GitHub Pages에서 검색 노출을 허용하려면 `.github/workflows/deploy-pages.yml`의 `PREVIEW_NOINDEX`를 `"false"`로 변경한다. (Cloudflare 기본 빌드 `npm run build`는 이미 `index,follow`가 기본 적용되어 있다.)
 - **미리보기 배포**: `npm run deploy:preview` (`hakso-preview` 대상)
 - **운영 배포**: 운영 정보(대표/이메일/계산 기준/도메인) 확정 및 사용자 공개 요청 후 `CONFIRM_PRODUCTION_DEPLOY=true npm run deploy:production` 실행 (`guard-production-deploy.mjs`가 미승인 운영 배포를 사전 차단함).
 - **장애 시 롤백**: `wrangler rollback` 또는 이전 정상 Git SHA 커밋에서 재빌드·재배포.
