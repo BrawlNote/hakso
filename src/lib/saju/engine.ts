@@ -45,6 +45,23 @@ export const DEFAULT_REFERENCE_TODAY = Object.freeze({ year: 2026, month: 11, da
 const MS_PER_MINUTE = 60_000;
 const MS_PER_DAY = 86_400_000;
 
+/**
+ * 실행 기기의 로컬 타임존 설정과 무관하게 현재 대한민국(Asia/Seoul, UTC+9) 기준 양력 오늘(연·월·일)을 반환한다.
+ */
+export function getCurrentSeoulSolarDate(nowMs: number = Date.now()): {
+  readonly year: number;
+  readonly month: number;
+  readonly day: number;
+} {
+  const seoulClockMs = nowMs + 540 * MS_PER_MINUTE;
+  const d = new Date(seoulClockMs);
+  return {
+    year: d.getUTCFullYear(),
+    month: d.getUTCMonth() + 1,
+    day: d.getUTCDate(),
+  };
+}
+
 /** 일주 기준 앵커: 양력 1900-01-01 = 갑술(甲戌, 60갑자 index 10) */
 const DAY_ANCHOR_UTC_MS = Date.UTC(1900, 0, 1);
 const DAY_ANCHOR_GANJI_INDEX = 10;
@@ -324,7 +341,7 @@ export function calculateSaju(
     };
   }
 
-  const today = options?.referenceToday ?? DEFAULT_REFERENCE_TODAY;
+  const today = options?.referenceToday ?? getCurrentSeoulSolarDate();
 
   const minInputYear = calendar === 'lunar' ? SUPPORTED_MIN_SOLAR_YEAR - 1 : SUPPORTED_MIN_SOLAR_YEAR;
   if (year < minInputYear) {

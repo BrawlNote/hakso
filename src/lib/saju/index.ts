@@ -3,6 +3,7 @@ export {
   SUPPORTED_MIN_SOLAR_YEAR,
   buildPillarDetail,
   calculateSaju,
+  getCurrentSeoulSolarDate,
 } from './engine';
 export { getKoreaStandardOffsetMin, resolveKoreaHistoricalTime } from './korea-time';
 export type {

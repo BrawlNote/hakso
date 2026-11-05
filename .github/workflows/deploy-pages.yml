@@ -35,6 +35,7 @@ jobs:
         env:
           SITE_URL: https://brawlnote.github.io
           BASE_PATH: /hakso
+          PUBLIC_DEPLOY_ENV: "preview"
           PREVIEW_NOINDEX: "true"
         run: |
           npm run build

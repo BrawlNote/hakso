@@ -90,8 +90,12 @@ export function resolveKoreaHistoricalTime(
   const isPre1908 = dateInt < 19080401;
   const standardOffsetMin = getKoreaStandardOffsetMin(year, month, day);
 
-  // 1961-08-10 00:00 에 UTC+08:30 -> UTC+09:00 전환으로 00:00~00:29 벽시계 시각이 건너뛰어짐
-  if (year === 1961 && month === 8 && day === 10 && hour === 0 && minute < 30) {
+  // 1912-01-01 00:00 및 1961-08-10 00:00 에 UTC+08:30 -> UTC+09:00 전환으로 00:00~00:29 벽시계 시각이 건너뛰어짐
+  if (
+    ((year === 1912 && month === 1 && day === 1) || (year === 1961 && month === 8 && day === 10)) &&
+    hour === 0 &&
+    minute < 30
+  ) {
     return {
       status: 'nonexistent',
       standardOffsetMin,
@@ -103,8 +107,7 @@ export function resolveKoreaHistoricalTime(
       isAmbiguousOverlap: false,
       isPre1908,
       note: null,
-      errorReason:
-        '1961년 8월 10일 00시 00분~00시 29분은 대한민국 표준시 변경(UTC+8:30 → UTC+9:00)으로 인해 당시 시계에 존재하지 않았던 시각입니다.',
+      errorReason: `${year}년 ${month}월 ${day}일 00시 00분~00시 29분은 대한민국 표준시 변경(UTC+8:30 → UTC+9:00)으로 인해 당시 시계에 존재하지 않았던 시각입니다.`,
     };
   }
 
@@ -141,19 +144,16 @@ export function resolveKoreaHistoricalTime(
       };
     }
 
-    // 서머타임 종료 시점의 중복 시각(Fall-back overlap) 검사 (예: 1987-10-11 02:00~02:59, 1988-10-09 02:00~02:59)
-    if (
-      year === rule.end.y &&
-      month === rule.end.mo &&
-      day === rule.end.d &&
-      hour >= rule.overlapStartHour &&
-      hour < rule.overlapEndHour
-    ) {
+    const startKey = toMinuteKey(rule.start.y, rule.start.mo, rule.start.d, rule.start.h, rule.start.m);
+    const endKey = toMinuteKey(rule.end.y, rule.end.mo, rule.end.d, rule.end.h, rule.end.m);
+
+    // 서머타임 종료 직전 1시간(endKey - 60분 ~ endKey)은 시계가 1시간 뒤로 돌아가며 두 번 반복된 중복 시각(Fall-back overlap) 구간임
+    // - 1948~1960년: 종료 시각(익일 00:00 = 전일 24:00) 직전 1시간인 종료 전날 23:00~23:59
+    // - 1987~1988년: 종료 시각(당일 03:00) 직전 1시간인 종료 당일 02:00~02:59
+    if (wallKey >= endKey - 60 && wallKey < endKey) {
       isAmbiguousOverlap = true;
     }
 
-    const startKey = toMinuteKey(rule.start.y, rule.start.mo, rule.start.d, rule.start.h, rule.start.m);
-    const endKey = toMinuteKey(rule.end.y, rule.end.mo, rule.end.d, rule.end.h, rule.end.m);
     if (wallKey >= startKey && wallKey < endKey) {
       isDstApplied = true;
       break;

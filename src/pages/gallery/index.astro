@@ -134,6 +134,17 @@ const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', 
     const grid = document.getElementById('gallery-grid');
 
     let currentIndex = 0;
+    let lastFocusedTrigger: HTMLElement | null = null;
+
+    function getVisibleItemIndices(): number[] {
+      const visible: number[] = [];
+      for (let i = 0; i < cards.length; i += 1) {
+        if (!cards[i].hidden) {
+          visible.push(i);
+        }
+      }
+      return visible.length > 0 ? visible : GALLERY_ITEMS.map((_, idx) => idx);
+    }
 
     // 1. 카테고리 필터
     for (const btn of filterBtns) {
@@ -152,7 +163,7 @@ const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', 
       });
     }
 
-    // 2. 라이트박스 열기/닫기/이동
+    // 2. 라이트박스 열기/닫기/이동 (현재 필터에서 보이는 항목만 순회 및 닫기 시 원래 버튼으로 포커스 복귀)
     function showLightboxAt(index: number) {
       if (!lightbox || !lightboxImg || !lightboxTitle || !lightboxDesc || !lightboxRights || !lightboxCategory) {
         return;
@@ -169,13 +180,22 @@ const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', 
       lightboxClose?.focus();
     }
 
+    function stepLightbox(delta: number) {
+      const visibleIndices = getVisibleItemIndices();
+      const pos = visibleIndices.indexOf(currentIndex);
+      const nextPos = pos === -1 ? 0 : (pos + delta + visibleIndices.length) % visibleIndices.length;
+      showLightboxAt(visibleIndices[nextPos]);
+    }
+
     function closeLightbox() {
       if (!lightbox) return;
       lightbox.hidden = true;
+      lastFocusedTrigger?.focus();
     }
 
     for (const thumb of thumbBtns) {
       thumb.addEventListener('click', function () {
+        lastFocusedTrigger = thumb;
         const idx = Number(thumb.getAttribute('data-lightbox-index') || '0');
         showLightboxAt(idx);
       });
@@ -183,10 +203,10 @@ const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', 
 
     lightboxClose?.addEventListener('click', closeLightbox);
     lightboxPrev?.addEventListener('click', function () {
-      showLightboxAt(currentIndex - 1);
+      stepLightbox(-1);
     });
     lightboxNext?.addEventListener('click', function () {
-      showLightboxAt(currentIndex + 1);
+      stepLightbox(1);
     });
 
     lightbox?.addEventListener('click', function (ev) {
@@ -200,9 +220,9 @@ const categories = ['전체', '학소 상징·풍경', '서재·공간 시안', 
       if (ev.key === 'Escape') {
         closeLightbox();
       } else if (ev.key === 'ArrowLeft') {
-        showLightboxAt(currentIndex - 1);
+        stepLightbox(-1);
       } else if (ev.key === 'ArrowRight') {
-        showLightboxAt(currentIndex + 1);
+        stepLightbox(1);
       }
     });
 

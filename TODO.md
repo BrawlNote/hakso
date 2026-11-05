@@ -8,18 +8,18 @@
 
 ## 1. [최우선 필수] 검색엔진 비노출(`noindex`) 해제 및 검색 등록
 
-현재 외부 테스트용으로 열어둔 GitHub Pages(`https://brawlnote.github.io/hakso/`)는 테스트 기간 중 검색엔진에 임시 주소가 수집되지 않도록 `PREVIEW_NOINDEX: "true"`가 걸려 있습니다. **정식 오픈 시 반드시 아래 절차를 수행해야 검색엔진(네이버·구글·다음)에 노출됩니다.**
+현재 외부 테스트용으로 열어둔 GitHub Pages(`https://brawlnote.github.io/hakso/`)는 테스트 기간 중 검색엔진에 임시 주소가 수집되지 않도록 `PUBLIC_DEPLOY_ENV: "preview"` 및 `PREVIEW_NOINDEX: "true"`가 걸려 있습니다. **정식 오픈 시 반드시 아래 절차를 수행해야 검색엔진(네이버·구글·다음)에 노출됩니다.**
 
 ### 1-1. 해제 방법
 - **경우 A: GitHub Pages에서 검색엔진 노출을 바로 허용할 때**
-  1. [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) 파일의 37번째 줄 `PREVIEW_NOINDEX: "true"`를 **`PREVIEW_NOINDEX: "false"`** (또는 해당 줄 삭제)로 변경 후 커밋·푸시합니다.
-  2. 배포 완료 후 페이지 소스에서 `<meta name="robots" content="index,follow">`로 출력되는지 확인합니다.
-  *(참고: `/saju/` 결과 영역은 개인 사주 결과 스니펫 유출 방지를 위해 `noarchive, nosnippet`만 유지되고 페이지 색인(`index,follow`)은 정상 허용됩니다.)*
+  1. [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) 파일의 `PUBLIC_DEPLOY_ENV: "preview"`를 **`PUBLIC_DEPLOY_ENV: "production"`**으로 바꾸고 `PREVIEW_NOINDEX: "true"`를 **`"false"`**로 변경 후 커밋·푸시합니다.
+  2. 배포 완료 후 페이지 소스에서 `<meta name="robots" content="index, follow">`로 출력되는지 확인합니다.
+  *(참고: `/saju/` 결과 영역은 개인 사주 결과 스니펫 유출 방지를 위해 `noarchive, nosnippet, noimageindex`만 유지되고 페이지 색인(`index, follow`)은 정상 허용됩니다.)*
 
 - **경우 B: 추후 클라우드플레어(Cloudflare) 및 정식 도메인으로 이전해 오픈할 때**
-  1. 기본 빌드(`npm run build`)는 원래부터 `<meta name="robots" content="index,follow">`로 빌드되므로, 클라우드플레어 운영 배포 시 자동으로 검색엔진 수집이 허용됩니다.
-  2.[`src/data/business.ts`](./src/data/business.ts)의 `siteUrl`과 [`public/robots.txt`](./public/robots.txt)의 `Sitemap:` 주소를 실제 구매한 정식 도메인으로 맞춥니다.
-  3. 정식 도메인 오픈 후에는 임시 테스트용이었던 GitHub Pages를 끄거나 `PREVIEW_NOINDEX: "true"` 상태로 두어 중복 문서 수집을 방지합니다.
+  1. 기본 빌드(`npm run build`)는 원래부터 `<meta name="robots" content="index, follow">`로 빌드되므로, 클라우드플레어 운영 배포 시 자동으로 검색엔진 수집이 허용됩니다.
+  2. [`src/data/business.ts`](./src/data/business.ts)의 기본 도메인(`siteUrl`)을 실제 구매한 정식 도메인으로 맞춥니다(사이트맵 `/sitemap.xml`과 `/robots.txt`의 `Sitemap:` 주소도 자동으로 연동됩니다).
+  3. 정식 도메인 오픈 후에는 임시 테스트용이었던 GitHub Pages를 끄거나 `PUBLIC_DEPLOY_ENV: "preview"` 상태로 두어 중복 문서 수집을 방지합니다.
 
 ### 1-2. 검색엔진 웹마스터 도구 등록
 - [ ] **네이버 서치어드바이저 (Naver Search Advisor)**: 사이트 소유 확인 후 `/sitemap.xml` 및 `/robots.txt` 제출

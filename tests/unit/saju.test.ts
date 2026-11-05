@@ -464,6 +464,7 @@ describe('학소 사주 만세력·계산 정책·경계 검증 (Stage 08 · 65+
     { label: '1988-05-08 02:30 서머타임 시작 공백 거부', year: 1988, month: 5, day: 8, hour: 2, minute: 30 },
     { label: '1987-05-10 02:15 서머타임 시작 공백 거부', year: 1987, month: 5, day: 10, hour: 2, minute: 15 },
     { label: '1961-08-10 00:15 표준시 변경(UTC+8:30->UTC+9) 공백 거부', year: 1961, month: 8, day: 10, hour: 0, minute: 15 },
+    { label: '1912-01-01 00:15 표준시 변경(UTC+8:30->UTC+9) 공백 거부', year: 1912, month: 1, day: 1, hour: 0, minute: 15 },
   ];
 
   it.each(nonexistentDstGapCases)('존재하지 않는 과거 현지 시각 거부: $label', (tc) => {
@@ -482,8 +483,8 @@ describe('학소 사주 만세력·계산 정책·경계 검증 (Stage 08 · 65+
     }
   });
 
-  it('서머타임 종료 시점의 중복 시각(1988-10-09 02:30)은 AMBIGUOUS_DST_TIME 제한을 기록한다', () => {
-    const res = calculateSaju({
+  it('서머타임 종료 시점의 중복 시각(1988-10-09 02:30, 1948-09-12 23:30)만 AMBIGUOUS_DST_TIME 제한을 기록하고 종료 다음날(1948-09-13 23:30)에는 오탐하지 않는다', () => {
+    const res1988 = calculateSaju({
       calendar: 'solar',
       year: 1988,
       month: 10,
@@ -492,9 +493,39 @@ describe('학소 사주 만세력·계산 정책·경계 검증 (Stage 08 · 65+
       hour: 2,
       minute: 30,
     });
-    expect(res.ok).toBe(true);
-    if (!res.ok) return;
-    expect(res.chart.limitations.some((l) => l.code === 'AMBIGUOUS_DST_TIME')).toBe(true);
+    expect(res1988.ok).toBe(true);
+    if (res1988.ok) {
+      expect(res1988.chart.limitations.some((l) => l.code === 'AMBIGUOUS_DST_TIME')).toBe(true);
+    }
+
+    // 1948년 서머타임 종료는 9월 12일 24:00(=9월 13일 00:00)이므로 중복 시각은 1948-09-12 23:00~23:59
+    const res1948Overlap = calculateSaju({
+      calendar: 'solar',
+      year: 1948,
+      month: 9,
+      day: 12,
+      timeStatus: 'known',
+      hour: 23,
+      minute: 30,
+    });
+    expect(res1948Overlap.ok).toBe(true);
+    if (res1948Overlap.ok) {
+      expect(res1948Overlap.chart.limitations.some((l) => l.code === 'AMBIGUOUS_DST_TIME')).toBe(true);
+    }
+
+    const res1948After = calculateSaju({
+      calendar: 'solar',
+      year: 1948,
+      month: 9,
+      day: 13,
+      timeStatus: 'known',
+      hour: 23,
+      minute: 30,
+    });
+    expect(res1948After.ok).toBe(true);
+    if (res1948After.ok) {
+      expect(res1948After.chart.limitations.some((l) => l.code === 'AMBIGUOUS_DST_TIME')).toBe(false);
+    }
   });
 
   // 9. 지원 범위·해외 출생·결정론적 결과 검증 (5개 사례)
@@ -510,7 +541,19 @@ describe('학소 사주 만세력·계산 정책·경계 검증 (Stage 08 · 65+
     if (!res.ok) expect(res.code).toBe('OUT_OF_SUPPORTED_RANGE');
   });
 
-  it('미래 날짜(2027-01-01) 입력은 FUTURE_BIRTH_DATE로 거부한다', () => {
+  it('미래 날짜(2027-01-01) 입력은 FUTURE_BIRTH_DATE로 거부하고, 오늘 날짜(예: 2026-11-05)는 정상 허용한다', () => {
+    const todayAllowed = calculateSaju(
+      {
+        calendar: 'solar',
+        year: 2026,
+        month: 11,
+        day: 5,
+        timeStatus: 'unknown',
+      },
+      { referenceToday: { year: 2026, month: 11, day: 5 } },
+    );
+    expect(todayAllowed.ok).toBe(true);
+
     const res = calculateSaju(
       {
         calendar: 'solar',
@@ -519,7 +562,7 @@ describe('학소 사주 만세력·계산 정책·경계 검증 (Stage 08 · 65+
         day: 1,
         timeStatus: 'unknown',
       },
-      { referenceToday: { year: 2026, month: 11, day: 4 } },
+      { referenceToday: { year: 2026, month: 11, day: 5 } },
     );
     expect(res.ok).toBe(false);
     if (!res.ok) expect(res.code).toBe('FUTURE_BIRTH_DATE');

@@ -35,8 +35,28 @@ for (const rel of requiredFiles) {
   }
 }
 
-// 1. 미승인 초안(draft) 파일이 dist나 sitemap.xml에 유출되었는지 검증
-const forbiddenDraftSlugs = ['preparation-guide', 'unknown-birth-time', 'opening-preparation'];
+// 1. 미승인 초안(draft) 파일이 dist나 sitemap.xml에 유출되었는지 동적 스캔으로 검증
+function findUnapprovedSlugs(collectionDir) {
+  const fullDir = path.resolve(process.cwd(), 'src/content', collectionDir);
+  if (!fs.existsSync(fullDir)) return [];
+  const slugs = [];
+  for (const entry of fs.readdirSync(fullDir)) {
+    if (!entry.endsWith('.md')) continue;
+    const raw = fs.readFileSync(path.join(fullDir, entry), 'utf8');
+    const isDraft = /draft:\s*true/.test(raw);
+    const isApproved = /reviewStatus:\s*["']approved["']/.test(raw);
+    const hasReviewer = /reviewer:\s*["'][^"'\s][^"']*["']/.test(raw);
+    if (isDraft || !isApproved || !hasReviewer) {
+      slugs.push(entry.replace(/\.md$/, ''));
+    }
+  }
+  return slugs;
+}
+
+const forbiddenDraftSlugs = [
+  ...findUnapprovedSlugs('articles'),
+  ...findUnapprovedSlugs('notices'),
+];
 const sitemapXml = fs.readFileSync(path.join(distDir, 'sitemap.xml'), 'utf8');
 
 for (const slug of forbiddenDraftSlugs) {
@@ -109,4 +129,17 @@ if (!sajuHtml.includes('noarchive, nosnippet') || !sajuHtml.includes('data-prote
   process.exit(1);
 }
 
-console.log(`[SECURITY PASS] 총 ${allDistFiles.length}개 빌드 산출물 보안·초안 차단·침투/퍼가기 방지 검증 통과.`);
+// 4. 테스트/미리보기 배포(PUBLIC_DEPLOY_ENV=preview 또는 PREVIEW_NOINDEX=true) 시 모든 HTML에 noindex 강제 검증
+const isPreviewBuild = process.env.PUBLIC_DEPLOY_ENV === 'preview' || process.env.PREVIEW_NOINDEX === 'true';
+if (isPreviewBuild) {
+  for (const file of allDistFiles) {
+    if (!file.endsWith('.html')) continue;
+    const html = fs.readFileSync(file, 'utf8');
+    if (!html.includes('noindex') || /content=["']index,\s*follow/i.test(html)) {
+      console.error(`[SECURITY FAIL] 테스트/미리보기 빌드에서 검색엔진 노출(index, follow)이 감지되었습니다: ${path.relative(distDir, file)}`);
+      process.exit(1);
+    }
+  }
+}
+
+console.log(`[SECURITY PASS] 총 ${allDistFiles.length}개 빌드 산출물 보안·초안 차단(${forbiddenDraftSlugs.length}건)·침투/퍼가기 방지 검증 통과.`);

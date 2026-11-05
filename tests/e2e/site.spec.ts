@@ -49,7 +49,7 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
     await expect(page.locator('.home-gallery-card')).toHaveCount(4);
   });
 
-  test('갤러리(/gallery/): 카테고리 필터 전환 및 라이트박스 확대 모달 동작 검증', async ({ page }) => {
+  test('갤러리(/gallery/): 카테고리 필터 전환, 필터 내 라이트박스 순회 및 닫기 후 포커스 복귀 검증', async ({ page }) => {
     await page.goto('/gallery/');
     await expect(page.locator('h1')).toContainText('학소 갤러리');
     await expect(page.locator('.gallery-card')).toHaveCount(4);
@@ -58,16 +58,22 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
     await page.click('[data-filter-category="서재·공간 시안"]');
     await expect(page.locator('.gallery-card:visible')).toHaveCount(2);
 
+    // 필터된 상태에서 첫 번째 보이는 카드 클릭 -> 다음 이미지 클릭 시 같은 필터 범위 안에서만 이동하는지 확인
+    const visibleThumbs = page.locator('.gallery-card:visible .gallery-thumb-btn');
+    await visibleThumbs.first().click();
+    const lightbox = page.locator('#gallery-lightbox');
+    await expect(lightbox).toBeVisible();
+    await expect(page.locator('#lightbox-category')).toHaveText('서재·공간 시안');
+
+    await page.click('#lightbox-next');
+    await expect(page.locator('#lightbox-category')).toHaveText('서재·공간 시안');
+
+    await page.click('#lightbox-close');
+    await expect(lightbox).toBeHidden();
+
     // 전체 보기 복귀
     await page.click('[data-filter-category="전체"]');
     await expect(page.locator('.gallery-card:visible')).toHaveCount(4);
-
-    // 첫 번째 이미지 클릭 시 라이트박스 열림 및 닫기 확인
-    await page.locator('.gallery-thumb-btn').first().click();
-    const lightbox = page.locator('#gallery-lightbox');
-    await expect(lightbox).toBeVisible();
-    await page.click('#lightbox-close');
-    await expect(lightbox).toBeHidden();
   });
 
   test('사주 체험(/saju/): 정상 입력 -> 확인 단계 -> 결과 표시 -> 시간 모름 전환 -> 오류 복구 -> 새로고침 초기화 검증', async ({

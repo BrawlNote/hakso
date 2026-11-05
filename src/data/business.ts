@@ -46,13 +46,18 @@ export interface BusinessInfo {
   };
 }
 
+const resolvedSiteUrl =
+  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.SITE) ||
+  (typeof process !== 'undefined' && process.env && process.env.SITE_URL) ||
+  'https://hakso.kr';
+
 export const BUSINESS_INFO: BusinessInfo = {
   name: '학소 철학관',
   shortName: '학소',
   slogan: '삶의 갈림길에서 사주 명리의 이치로 방향을 함께 살핍니다',
   description:
     '서울 강북구 한천로 1167 3층 소재 학소 철학관 공식 홈페이지입니다. 만세력 기반 무료 기본 사주 체험과 이메일 상담 안내를 제공합니다.',
-  siteUrl: 'https://hakso.kr',
+  siteUrl: resolvedSiteUrl.replace(/\/+$/, ''),
   address: {
     full: '서울 강북구 한천로 1167 3층',
     region: '서울 강북구',

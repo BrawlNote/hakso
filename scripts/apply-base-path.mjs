@@ -35,9 +35,9 @@ for (const file of walkFiles(distDir)) {
   let next = original.replace(attrRegex, `$1=$2${basePrefix}/`).replace(galleryPathRegex, `$1${basePrefix}/images/gallery/`);
 
   // GitHub Pages 외부 테스트 배포 시 검색엔진 노출(인덱싱) 방지
-  if (process.env.PREVIEW_NOINDEX === 'true' && file.endsWith('.html')) {
+  if ((process.env.PREVIEW_NOINDEX === 'true' || process.env.PUBLIC_DEPLOY_ENV === 'preview') && file.endsWith('.html')) {
     next = next.replace(
-      /<meta name="robots" content="index,follow">/g,
+      /<meta name="robots" content="index,\s*follow([^"]*)">/g,
       '<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">',
     );
   }

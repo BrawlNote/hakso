@@ -53,8 +53,8 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
           <p id="saju-error-hint" style="margin: 0; font-size: var(--text-sm);"></p>
         </div>
 
-        <!-- 단계 1: 출생 정보 입력 폼 -->
-        <form id="saju-form" class="card saju-form-card" novalidate autocomplete="off">
+        <!-- 단계 1: 출생 정보 입력 폼 (method="dialog" 및 생년월일 input name 미사용으로 no-JS 환경에서도 URL 쿼리 유출 원천 차단) -->
+        <form id="saju-form" class="card saju-form-card" method="dialog" novalidate autocomplete="off">
           <h2 style="margin-top: 0;">1단계. 출생 정보 입력</h2>
           <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: 0;">
             성명·전화번호·이메일은 입력받지 않습니다. 출생 시각을 정확히 모르시면 "출생 시간 모름"을 선택해 주세요.
@@ -63,7 +63,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
           <!-- 자동화 스크래퍼 방지용 허니팟 필드 -->
           <div class="hp-trap-field" aria-hidden="true">
             <label for="saju-hp-website">이 필드는 비워 두세요</label>
-            <input type="text" id="saju-hp-website" name="website_url_hp" tabindex="-1" autocomplete="off" />
+            <input type="text" id="saju-hp-website" tabindex="-1" autocomplete="off" />
           </div>
 
           <fieldset class="form-fieldset">
@@ -78,7 +78,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
                 <span>음력</span>
               </label>
               <label class="checkbox-label" id="leap-month-wrap">
-                <input type="checkbox" name="isLeapMonth" id="input-leap-month" disabled />
+                <input type="checkbox" id="input-leap-month" disabled />
                 <span>음력 윤달(閏月) 생일입니다</span>
               </label>
             </div>
@@ -86,13 +86,12 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 
           <div class="form-grid-3">
             <div class="form-field">
-              <label for="input-year" class="form-label">출생 연도 (1900~2026)</label>
+              <label for="input-year" class="form-label" id="label-input-year">출생 연도 (1900~현재)</label>
               <input
                 type="number"
                 id="input-year"
-                name="year"
                 min="1900"
-                max="2026"
+                max="2030"
                 inputmode="numeric"
                 placeholder="예: 1992"
                 required
@@ -104,7 +103,6 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
               <input
                 type="number"
                 id="input-month"
-                name="month"
                 min="1"
                 max="12"
                 inputmode="numeric"
@@ -118,7 +116,6 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
               <input
                 type="number"
                 id="input-day"
-                name="day"
                 min="1"
                 max="31"
                 inputmode="numeric"
@@ -149,7 +146,6 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
               <input
                 type="number"
                 id="input-hour"
-                name="hour"
                 min="0"
                 max="23"
                 inputmode="numeric"
@@ -162,7 +158,6 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
               <input
                 type="number"
                 id="input-minute"
-                name="minute"
                 min="0"
                 max="59"
                 inputmode="numeric"
@@ -175,14 +170,14 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
           <div class="form-grid-2">
             <div class="form-field">
               <label for="input-region" class="form-label">출생 지역 (시간대 기준 확인)</label>
-              <select id="input-region" name="birthRegion" class="form-select">
+              <select id="input-region" class="form-select">
                 <option value="KR" selected>대한민국 국내 출생 (Asia/Seoul 기준)</option>
                 <option value="OTHER">해외 출생 (자동 계산 미지원 · 개별 문의)</option>
               </select>
             </div>
             <div class="form-field">
               <label for="input-topic" class="form-label">중점적으로 살필 주제 (선택)</label>
-              <select id="input-topic" name="topic" class="form-select">
+              <select id="input-topic" class="form-select">
                 <option value="general" selected>종합 명식과 삶의 기조</option>
                 <option value="career">진로·직업·일하는 방식</option>
                 <option value="relationship">대인관계·소통과 거리감</option>
@@ -247,6 +242,9 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
                 </h2>
               </div>
               <div class="btn-row">
+                <button type="button" class="btn btn-primary" id="btn-copy-summary">
+                  상담 문의용 내 명식 요약 복사
+                </button>
                 <button type="button" class="btn btn-secondary" id="btn-result-edit">
                   입력 수정하기
                 </button>
@@ -258,7 +256,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 
             <div id="copy-guard-toast" class="notice-box warning" hidden role="status">
               <p style="margin: 0; font-size: var(--text-sm);">
-                보호 안내: 학소 철학관의 사주 명식 표와 기본 풀이 원고는 저작권 보호를 위해 무단 복사·우클릭·외부 퍼가기가 제한됩니다.
+                보호 안내: 기본 풀이 원고 전체의 무단 복제·우클릭·외부 퍼가기는 제한됩니다. 이메일 상담 문의에 필요한 본인 사주 명식(4주)은 상단의 <strong>"상담 문의용 내 명식 요약 복사"</strong> 버튼으로 복사하실 수 있습니다.
               </p>
             </div>
 
@@ -307,7 +305,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 </SiteLayout>
 
 <script>
-  import { calculateSaju, type SajuBirthInput, type SajuChart } from '../../lib/saju';
+  import { calculateSaju, getCurrentSeoulSolarDate, type SajuBirthInput, type SajuChart } from '../../lib/saju';
 
   (function initSajuExperience() {
     const nojsFallback = document.getElementById('saju-nojs-fallback');
@@ -327,6 +325,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
     const timeKnown = document.getElementById('time-known') as HTMLInputElement | null;
     const timeUnknown = document.getElementById('time-unknown') as HTMLInputElement | null;
     const inputYear = document.getElementById('input-year') as HTMLInputElement | null;
+    const labelInputYear = document.getElementById('label-input-year') as HTMLElement | null;
     const inputMonth = document.getElementById('input-month') as HTMLInputElement | null;
     const inputDay = document.getElementById('input-day') as HTMLInputElement | null;
     const inputHour = document.getElementById('input-hour') as HTMLInputElement | null;
@@ -334,6 +333,14 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
     const inputRegion = document.getElementById('input-region') as HTMLSelectElement | null;
     const inputTopic = document.getElementById('input-topic') as HTMLSelectElement | null;
     const hpInput = document.getElementById('saju-hp-website') as HTMLInputElement | null;
+
+    const currentSeoulDate = getCurrentSeoulSolarDate();
+    if (inputYear) {
+      inputYear.max = String(currentSeoulDate.year);
+    }
+    if (labelInputYear) {
+      labelInputYear.textContent = `출생 연도 (1900~${currentSeoulDate.year})`;
+    }
 
     const errorBanner = document.getElementById('saju-error-banner') as HTMLElement | null;
     const errorTitle = document.getElementById('saju-error-title') as HTMLElement | null;
@@ -345,6 +352,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
     const btnBackToEdit = document.getElementById('btn-back-to-edit') as HTMLButtonElement | null;
 
     const resultStep = document.getElementById('saju-result-step') as HTMLElement | null;
+    const btnCopySummary = document.getElementById('btn-copy-summary') as HTMLButtonElement | null;
     const btnResultEdit = document.getElementById('btn-result-edit') as HTMLButtonElement | null;
     const btnResultRestart = document.getElementById('btn-result-restart') as HTMLButtonElement | null;
     const copyGuardToast = document.getElementById('copy-guard-toast') as HTMLElement | null;
@@ -705,13 +713,16 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
       }
 
       const parsed = parseFormInput();
-      const res = calculateSaju(parsed);
+      const res = calculateSaju(parsed, { referenceToday: getCurrentSeoulSolarDate() });
       if (!res.ok) {
         showError(res.message, res.recoveryHint, res.field);
         return;
       }
 
       pendingChart = res.chart;
+      if (btnCopySummary) {
+        btnCopySummary.textContent = '상담 문의용 내 명식 요약 복사';
+      }
       renderConfirmationStep(res.chart);
     });
 
@@ -757,6 +768,24 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
         syncCalendarState();
         syncTimeState();
         inputYear?.focus();
+      }
+    });
+
+    // 이메일 상담 문의 시 사용자가 본인 명식 요약만 안전하게 복사해 붙여넣을 수 있도록 지원
+    btnCopySummary?.addEventListener('click', function () {
+      if (!pendingChart) return;
+      const c = pendingChart;
+      const hourText = c.pillars.hour ? `${c.pillars.hour.korean}(${c.pillars.hour.hanja})` : '시주 미상(시간 모름)';
+      const summaryText = [
+        `[학소 철학관 상담 문의용 명식 요약]`,
+        `- 출생 기준: ${c.normalizedInput.originalDateLabel} (양력 ${c.normalizedInput.solar.year}-${String(c.normalizedInput.solar.month).padStart(2, '0')}-${String(c.normalizedInput.solar.day).padStart(2, '0')} · ${c.normalizedInput.timeLabel})`,
+        `- 사주 명식: 연주 ${c.pillars.year.korean}(${c.pillars.year.hanja}) / 월주 ${c.pillars.month.korean}(${c.pillars.month.hanja}) / 일주 ${c.pillars.day.korean}(${c.pillars.day.hanja}) / 시주 ${hourText}`,
+      ].join('\n');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summaryText).then(function () {
+          btnCopySummary.textContent = '명식 요약이 복사되었습니다';
+        });
       }
     });
 
