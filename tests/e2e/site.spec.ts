@@ -22,12 +22,19 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
     }
   });
 
-  test('확정된 소재지 표기, 대표/이메일 공란 숨김, 빈 mailto 미생성 및 이메일 상담 준비 중 안내 검증', async ({
+  test('주소 비공개, 대표/이메일 공란 숨김, 빈 mailto 미생성 및 이메일 상담 준비 중 안내 검증', async ({
     page,
   }) => {
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('사주 명리의 이치로');
-    await expect(page.locator('body')).toContainText('서울 강북구 한천로 1167 3층');
+    await expect(page.locator('body')).not.toContainText('소재지');
+    for (const path of ['/', '/about/', '/faq/', '/visit/']) {
+      await page.goto(path);
+      const html = await page.content();
+      expect(html).not.toMatch(/PostalAddress|streetAddress|addressLocality/);
+      await expect(page.locator('a[href="/visit/"]')).toHaveCount(0);
+    }
+    await page.goto('/');
     await expect(page.locator('body')).toContainText('이메일 상담 준비 중');
 
     // 빈 mailto 링크나 전화(tel:) 링크가 존재하지 않아야 함
@@ -39,7 +46,7 @@ test.describe('학소 철학관 A+B 반응형·접근성·사주 체험·보안 
     // 푸터에 빈 '대표' 또는 빈 '상담 이메일' 레이블이 노출되지 않아야 함
     const footerDts = await page.locator('.footer-facts dt').allTextContents();
     expect(footerDts).toContain('상호');
-    expect(footerDts).toContain('소재지');
+    expect(footerDts).not.toContain('소재지');
     expect(footerDts).not.toContain('대표');
     expect(footerDts).not.toContain('상담 이메일');
 

@@ -9,7 +9,6 @@ const PUBLIC_STATIC_PATHS = [
   '/gallery/',
   '/consultation/',
   '/booking/',
-  '/visit/',
   '/saju/',
   '/faq/',
   '/articles/',

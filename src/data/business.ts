@@ -6,8 +6,8 @@
  *    반드시 빈 문자열("")로 유지하며, 화면에서 빈 레이블을 노출하지 않는다.
  * 2. 상담 이메일이 비어 있을 때는 절대 빈 `mailto:`나 임시 이메일 주소를 생성하지 않고,
  *    "이메일 상담 준비 중" 상태를 표시한다.
- * 3. 소재지(`서울 강북구 한천로 1167 3층`)는 확인된 주소이나, 초기 상담은 이메일 상담만 진행하므로
- *    방문 상담 접수로 오인되는 문구나 예약 버튼을 표시하지 않는다.
+ * 3. 소재지는 사용자 요청으로 비공개이며, 추후 공개 요청 전까지 모든 주소 필드를 비워 둔다.
+ *    화면·메타데이터·구조화 데이터에 주소나 빈 소재지 레이블을 표시하지 않는다.
  */
 
 export type ConsultationMode = 'email';
@@ -56,15 +56,15 @@ export const BUSINESS_INFO: BusinessInfo = {
   shortName: '학소',
   slogan: '삶의 갈림길에서 사주 명리의 이치로 방향을 함께 살핍니다',
   description:
-    '서울 강북구 한천로 1167 3층 소재 학소 철학관 공식 홈페이지입니다. 만세력 기반 무료 기본 사주 체험과 이메일 상담 안내를 제공합니다.',
+    '학소 철학관 공식 홈페이지입니다. 만세력 기반 무료 기본 사주 체험과 이메일 상담 안내를 제공합니다.',
   siteUrl: resolvedSiteUrl.replace(/\/+$/, ''),
   address: {
-    full: '서울 강북구 한천로 1167 3층',
-    region: '서울 강북구',
-    street: '한천로 1167',
-    floor: '3층',
+    full: '',
+    region: '',
+    street: '',
+    floor: '',
     visitReceptionOpen: false,
-    note: '현재 소재지 안내는 사업장 위치 정보 제공 목적이며, 초기 상담은 이메일 상담으로만 진행합니다. 사전 확정 없는 현장 방문 접수는 받지 않습니다.',
+    note: '',
   },
   consultationMode: 'email',
   representativeName: '',
@@ -117,7 +117,6 @@ export function getSafeMailtoHref(info: BusinessInfo = BUSINESS_INFO): string | 
 export function getVisibleBusinessFacts(info: BusinessInfo = BUSINESS_INFO): Array<{ label: string; value: string }> {
   const facts: Array<{ label: string; value: string }> = [
     { label: '상호', value: info.name },
-    { label: '소재지', value: info.address.full },
     { label: '초기 상담 방식', value: '이메일 상담 전용 (방문·전화 접수 미운영)' },
     { label: '홈페이지 사주 체험', value: info.pricingPolicy.webSaju },
   ];

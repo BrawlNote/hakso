@@ -15,9 +15,11 @@ import { sanitizeAnalyticsEvent } from '../../src/lib/analytics/events';
 import { filterApprovedEntries, isPubliclyApproved, type ContentEntryLike } from '../../src/lib/content/filter';
 
 describe('사업 정보 및 이메일 공란 분기 계약 (Stage 01, 05)', () => {
-  it('확정된 소재지(서울 강북구 한천로 1167 3층)와 초기 이메일 상담 전용 설정을 유지한다', () => {
+  it('주소는 비공개로 비워 두고 초기 이메일 상담 전용 설정을 유지한다', () => {
     expect(BUSINESS_INFO.name).toBe('학소 철학관');
-    expect(BUSINESS_INFO.address.full).toBe('서울 강북구 한천로 1167 3층');
+    for (const key of ['full', 'region', 'street', 'floor', 'note'] as const) {
+      expect(BUSINESS_INFO.address[key]).toBe('');
+    }
     expect(BUSINESS_INFO.address.visitReceptionOpen).toBe(false);
     expect(BUSINESS_INFO.consultationMode).toBe('email');
     expect(BUSINESS_INFO.pricingPolicy.webSaju).toBe('무료 제공');
@@ -33,7 +35,7 @@ describe('사업 정보 및 이메일 공란 분기 계약 (Stage 01, 05)', () =
     const visibleFacts = getVisibleBusinessFacts(BUSINESS_INFO);
     const labels = visibleFacts.map((f) => f.label);
     expect(labels).toContain('상호');
-    expect(labels).toContain('소재지');
+    expect(labels).not.toContain('소재지');
     expect(labels).not.toContain('대표');
     expect(labels).not.toContain('상담 이메일');
     for (const fact of visibleFacts) {

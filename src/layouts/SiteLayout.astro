@@ -41,16 +41,10 @@ if (noarchive) {
 const structuredData = includeStructuredData
   ? {
       '@context': 'https://schema.org',
-      '@type': 'ProfessionalService',
+      '@type': 'Organization',
       name: BUSINESS_INFO.name,
       description: BUSINESS_INFO.description,
       url: BUSINESS_INFO.siteUrl,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: `${BUSINESS_INFO.address.street} ${BUSINESS_INFO.address.floor}`,
-        addressLocality: BUSINESS_INFO.address.region,
-        addressCountry: 'KR',
-      },
       ...(hasConsultationEmail(BUSINESS_INFO) ? { email: BUSINESS_INFO.consultationEmail } : {}),
     }
   : null;

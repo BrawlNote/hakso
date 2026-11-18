@@ -7,7 +7,7 @@
 - **작업 경로**: `/Users/daeinlee/Desktop/src/hakso` (macOS `arm64`, macOS `27.0.1`, Node `v24.18.1`, npm `11.16.0`, Git `2.55.0`, Safari `27.0.1`)
 - **기존 파일 보존**: `README.md`, `ANTIGRAVITY_WORK_ORDER.md`, `docs/01_REQUIREMENTS.md` ~ `docs/04_OWNER_CHECKLIST.md` 원본 보존 완료.
 - **확정 범위 및 추가 요구사항 반영**:
-  - 소재지: `서울 강북구 한천로 1167 3층` (현장 방문 접수 아님, 초기 이메일 상담만 진행)
+  - 소재지: 비공개 (2026-11-18 사용자 요청, 주소·지역·지도·길찾기 노출 제거)
   - 대표 정보·상담 이메일 주소: 공란 유지 (`""`), 빈 레이블 숨김, 이메일 미제공 시 “이메일 상담 준비 중” 안내 및 `mailto:` 생성 원천 차단
   - 홈페이지 사주 체험: 무료 기본 풀이만 제공 (이메일 상담 요금은 별도 미정으로 안내)
   - 유료 AI 풀이(C): 후속 계획만 유지, 초기 AI API·결제·비용 저장소·유료 버튼 미구현
@@ -22,7 +22,7 @@
 | 02 | 디자인·와이어프레임 | 완료 | `src/styles/tokens.css`, `src/styles/global.css`, `src/layouts/SiteLayout.astro` |
 | 03 | Astro·도구·CI 기반 | 완료 | `.nvmrc`, `.env.example`, `package.json`, `package-lock.json`, `astro.config.mjs`, `wrangler.jsonc`, `tsconfig.json`, `vitest.config.ts`, `playwright.config.ts` |
 | 04 | 홍보 페이지·공통 UI·대문 비주얼·갤러리 | 완료 | `src/components/*`, `/`(대문 비주얼 + 갤러리 미리보기), `/gallery/`(분류 필터 + 라이트박스), `/about/`, `/consultation/`, `/booking/`, `/visit/`, `/faq/`, `/articles/`, `/notices/`, `/privacy/`, `/terms/`, `/404.astro` |
-| 05 | 콘텐츠·이메일 상담 안내 | 완료 | 소재지 반영, 대표/이메일 공란 숨김 및 준비 중 분기, `src/content.config.ts`, `src/lib/content/filter.ts` |
+| 05 | 콘텐츠·이메일 상담 안내 | 완료 | 주소 비공개, 대표/이메일 공란 숨김 및 준비 중 분기, `src/content.config.ts`, `src/lib/content/filter.ts` |
 | 06 | SEO·정책·A 미리보기 | 완료 | `src/pages/sitemap.xml.ts`, `public/robots.txt`, `public/_headers`, `scripts/verify-security.mjs` |
 | 07 | 만세력 후보·정책 비교 실험 | 완료 | `manseryeok@2.0.0` 선정 및 KASI `korean-lunar-calendar` 47,846일 전수 대조·`astronomy-engine` 절입 대조 (`docs/DECISIONS.md`) |
 | 08 | 공유 계산 모듈·기본 풀이 | 완료 | `src/lib/saju/` (`types.ts`, `korea-time.ts`, `interpretations.ts`, `engine.ts`, `index.ts`), `tests/unit/saju.test.ts` (68개 테스트 통과) |
@@ -30,6 +30,13 @@
 | 10 | A+B 통합·Mac 검수 | 완료 | `check`, `build`, `test` (78건), `test:security` (26개 산출물), `test:e2e` (Chromium + WebKit 14건 통과), `docs/TEST_EVIDENCE.md`, `docs/OPERATIONS.md` |
 | 11~13 | 후속 유료 AI 풀이 (C) | 후속 계획만 (미착수) | 사용자 지시에 따라 초기 구현 제외 |
 | 14~15 | 운영 공개·전달 | 운영 정보 확정 대기 | 대표자명·상담 이메일·학소 계산 기준 최종 확정 및 배포 요청 시 실행 |
+
+## 2026-11-18 주소 비공개 요청 반영
+
+- 운영 준비 전 주소 노출을 원하지 않는다는 사용자 요청에 따라 사업 정보의 주소 필드를 비우고 홈·소개·푸터·FAQ·검색 설명·구조화 데이터에서 주소를 제거했다.
+- 기존 `/visit/`는 주소 없는 상담 준비 안내로 변경하고 메뉴·사이트맵에서 제외했으며 `noindex`를 적용했다. 기획·운영 문서도 주소 비공개·사용자 추후 업데이트로 정리했다.
+- 로컬 검증: 콘텐츠 계약 10건 및 전체 단위/계약 79건 통과, Astro check 오류·경고 0건, GitHub Pages 설정 빌드 및 보안 검사 통과. 텍스트 빌드 산출물 20개에서 주소·지역·주소 구조화 데이터·소재지 링크 미노출 확인. 브라우저 E2E와 실제 기기 검수는 이번 변경에서 실행하지 않았다.
+- 이 기록 시점의 공개 사이트 반영은 아래 검증과 별도로 GitHub Actions 배포 및 공개 HTTP 응답으로 확인한다.
 
 ## 3. 남은 미정 결정 및 다음 첫 행동
 

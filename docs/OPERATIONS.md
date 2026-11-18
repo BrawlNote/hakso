@@ -44,7 +44,7 @@ npm run test:e2e
    - 유효한 이메일이 입력되면 사이트 전체의 `"이메일 상담 준비 중"` 배지가 `"이메일 상담 운영 중"`으로 전환되고, 메일 작성 연결(`mailto:`) 버튼과 `"이메일 주소 복사"` 버튼이 자동으로 활성화된다.
    - 반영 후 반드시 `npm test` 및 모바일 실기기에서 메일 앱 연결과 주소 복사 동작을 확인한다.
 3. **소재지 안내 변경**:
-   - 현재 확정 주소(`서울 강북구 한천로 1167 3층`)는 `BUSINESS_INFO.address`에 설정되어 있으며, `visitReceptionOpen: false`를 통해 현장 방문 접수를 받지 않음을 명시하고 있다.
+   - 2026-11-18 사용자 요청으로 소재지는 비공개다. `BUSINESS_INFO.address`는 공란으로 유지하고 화면·검색 설명·구조화 데이터에 주소를 넣지 않는다. 기존 `/visit/`는 주소 없는 상담 준비 안내이며 메뉴·사이트맵에서 제외했다. 사용자가 추후 주소 공개를 요청할 때 콘텐츠와 검수를 함께 업데이트한다.
 4. **첫 화면 대문 사진(Hero) 및 갤러리(`src/data/gallery.ts`) 실사 교체 방법**:
    - 실제 학소 내부·서재 사진을 촬영한 후 `public/images/gallery/` 폴더에 이미지 파일(WebP/JPG/PNG 권장)을 저장한다.
    - `src/data/gallery.ts`의 `HERO_BANNER_IMAGE` 및 `GALLERY_ITEMS`에서 `src`, `width`, `height`, `alt`, `description`, `rightsNote`를 수정한다.
